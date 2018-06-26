@@ -1,0 +1,74 @@
+#ifndef VEC4I_H
+#define VEC4I_H
+
+#ifdef __SSE2__
+namespace TSimd{
+    template<> class vec<int,4>{
+    public:
+        TSIMD_INLINE vec(){}
+        TSIMD_INLINE vec(int a){ data = _mm_set1_epi32(a); }
+        TSIMD_INLINE vec(int* a){ data = _mm_loadu_si128((__m128i*)a); }
+        TSIMD_INLINE vec(__m128i a){ data = a; }
+        TSIMD_INLINE vec(int a, int b, int c, int d){ data = _mm_set_epi32(d,c,b,a); }
+        TSIMD_INLINE void store(int* a){ _mm_storeu_si128((__m128i*)a,data); }
+        TSIMD_INLINE vec<int,4>& operator+=(const vec<int,4>& rhs){
+            data = _mm_add_epi32(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<int,4>& operator-=(const vec<int,4>& rhs){
+            data = _mm_sub_epi32(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<int,4>& operator*=(const vec<int,4>& rhs){
+            #ifdef __SSE4_1__
+                data = _mm_mullo_epi32(data,rhs.data);
+                return *this;
+            #else
+                __m128i a = _mm_mul_epu32(data,rhs.data);
+                __m128i b = _mm_mul_epu32(_mm_shuffle_epi32(data,_MM_SHUFFLE(3,3,1,1)),_mm_shuffle_epi32(rhs.data,_MM_SHUFFLE(3,3,1,1)));
+                a = _mm_shuffle_epi32(a,_MM_SHUFFLE(3,2,2,0));
+                b = _mm_shuffle_epi32(b,_MM_SHUFFLE(3,2,2,0));
+                data = _mm_unpacklo_epi32(a,b);
+                return *this;
+            #endif
+        }
+        inline vec<int,4>& operator/=(const vec<int,4>& rhs){ //TODO find simd integer division algorithm
+            ((int*)&data)[0]/=((int*)&rhs.data)[0];
+            ((int*)&data)[1]/=((int*)&rhs.data)[1];
+            ((int*)&data)[2]/=((int*)&rhs.data)[2];
+            ((int*)&data)[3]/=((int*)&rhs.data)[3];
+            return *this;
+        }
+        TSIMD_INLINE vec<int,4> operator+(const vec<int,4>& rhs) const {
+            return vec<int,4>(_mm_add_epi32(data,rhs.data));
+        }
+        TSIMD_INLINE vec<int,4> operator-(const vec<int,4>& rhs) const {
+            return vec<int,4>(_mm_sub_epi32(data,rhs.data));
+        }
+        TSIMD_INLINE vec<int,4> operator*(const vec<int,4>& rhs) const {
+            #ifdef __SSE4_1__
+                return vec<int,4>(_mm_mullo_epi32(data,rhs.data));
+            #else
+                __m128i a = _mm_mul_epu32(data,rhs.data);
+                __m128i b = _mm_mul_epu32(_mm_shuffle_epi32(data,_MM_SHUFFLE(3,3,1,1)),_mm_shuffle_epi32(rhs.data,_MM_SHUFFLE(3,3,1,1)));
+                a = _mm_shuffle_epi32(a,_MM_SHUFFLE(3,2,2,0));
+                b = _mm_shuffle_epi32(b,_MM_SHUFFLE(3,2,2,0));
+                return vec<int,4>(_mm_unpacklo_epi32(a,b));
+            #endif
+        }
+        TSIMD_INLINE vec<int,4> operator/(const vec<int,4>& rhs) const { //TODO find simd integer division algorithm
+            vec<int,4> r(data);
+            r/=rhs;
+            return r;
+        }
+        __m128i data;
+        enum{ size = 4 };
+        friend std::ostream& operator<<(std::ostream& out, vec<int, 4> v){
+            out<<((int*)&v.data)[0]<<" "<<((int*)&v.data)[1]<<" "<<((int*)&v.data)[2]<<" "<<((int*)&v.data)[3];
+            return out;
+        }
+    };
+}
+#endif
+
+#endif //VEC4I_H
