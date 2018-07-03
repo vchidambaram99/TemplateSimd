@@ -77,8 +77,14 @@ namespace TSimd{
 #include "src/char/vec16c.h"
 #include "src/char/vec32c.h"
 //UCHARS
+#include "src/uchar/vec16uc.h"
+#include "src/uchar/vec32uc.h"
 //SHORTS
+#include "src/short/vec8s.h"
+#include "src/short/vec16s.h"
 //USHORTS
+#include "src/ushort/vec8us.h"
+#include "src/ushort/vec16us.h"
 //LONGS
 //ULONGS
 
