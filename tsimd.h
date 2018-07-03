@@ -4,6 +4,7 @@
 #include <immintrin.h>
 #include <ostream>
 
+//if this fails, then you probably need a newer compiler
 #if _MSC_VER >= 1400 || __ICC || __ICL
     #define TSIMD_INLINE __forceinline
 #elif __GNUC__ > 4 || (__GNUC__== 4 && __GNUC_MINOR__> 1)
@@ -73,6 +74,8 @@ namespace TSimd{
 #include "src/uint/vec4ui.h"
 #include "src/uint/vec8ui.h"
 //CHARS
+#include "src/char/vec16c.h"
+#include "src/char/vec32c.h"
 //UCHARS
 //SHORTS
 //USHORTS

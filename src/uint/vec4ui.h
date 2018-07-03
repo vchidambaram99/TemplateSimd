@@ -11,6 +11,8 @@ namespace TSimd{
         TSIMD_INLINE vec(__m128i a){ data = a; }
         TSIMD_INLINE vec(unsigned int a, unsigned int b, unsigned int c, unsigned int d){ data = _mm_set_epi32(d,c,b,a); }
         TSIMD_INLINE void store(unsigned int* a){ _mm_storeu_si128((__m128i*)a,data); }
+        TSIMD_INLINE unsigned int& operator[](int idx){ return ((unsigned int*)(&data))[idx]; }
+        TSIMD_INLINE const unsigned int& operator[](int idx) const { return ((unsigned int*)(&data))[idx]; }
         TSIMD_INLINE vec<unsigned int,4>& operator+=(const vec<unsigned int,4>& rhs){
             data = _mm_add_epi32(data,rhs.data);
             return *this;
@@ -33,10 +35,10 @@ namespace TSimd{
             #endif
         }
         inline vec<unsigned int,4>& operator/=(const vec<unsigned int,4>& rhs){ //TODO find simd unsigned integer division algorithm
-            ((unsigned int*)&data)[0]/=((unsigned int*)&rhs.data)[0];
-            ((unsigned int*)&data)[1]/=((unsigned int*)&rhs.data)[1];
-            ((unsigned int*)&data)[2]/=((unsigned int*)&rhs.data)[2];
-            ((unsigned int*)&data)[3]/=((unsigned int*)&rhs.data)[3];
+            (*this)[0]/=rhs[0];
+            (*this)[1]/=rhs[1];
+            (*this)[2]/=rhs[2];
+            (*this)[3]/=rhs[3];
             return *this;
         }
         TSIMD_INLINE vec<unsigned int,4> operator+(const vec<unsigned int,4>& rhs) const {
@@ -64,7 +66,7 @@ namespace TSimd{
         __m128i data;
         enum{ size = 4 };
         friend std::ostream& operator<<(std::ostream& out, vec<unsigned int, 4> v){
-            out<<((unsigned int*)&v.data)[0]<<" "<<((unsigned int*)&v.data)[1]<<" "<<((unsigned int*)&v.data)[2]<<" "<<((unsigned int*)&v.data)[3];
+            out<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3];
             return out;
         }
     };

@@ -11,6 +11,8 @@ namespace TSimd{
         TSIMD_INLINE vec(__m128 a){ data = a; }
         TSIMD_INLINE vec(float a, float b, float c, float d){ data = _mm_set_ps(d,c,b,a); }
         TSIMD_INLINE void store(float* a){ _mm_storeu_ps(a,data); }
+        TSIMD_INLINE float& operator[](int idx){ return ((float*)(&data))[idx]; }
+        TSIMD_INLINE const float& operator[](int idx) const { return ((float*)(&data))[idx]; }
         TSIMD_INLINE vec<float,4>& operator+=(const vec<float,4>& rhs){
             data = _mm_add_ps(data,rhs.data);
             return *this;
@@ -42,7 +44,7 @@ namespace TSimd{
         __m128 data;
         enum{ size = 4 };
         friend std::ostream& operator<<(std::ostream& out, vec<float,4> v){
-            out<<((float*)&v.data)[0]<<" "<<((float*)&v.data)[1]<<" "<<((float*)&v.data)[2]<<" "<<((float*)&v.data)[3];
+            out<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3];
             return out;
         }
     };

@@ -11,6 +11,8 @@ namespace TSimd{
         TSIMD_INLINE vec(__m256 a){ data = a; }
         TSIMD_INLINE vec(float a, float b, float c, float d, float e, float f, float g, float h){ data = _mm256_set_ps(h,g,f,e,d,c,b,a); }
         TSIMD_INLINE void store(float* a){ _mm256_storeu_ps(a,data); }
+        TSIMD_INLINE float& operator[](int idx){ return ((float*)(&data))[idx]; }
+        TSIMD_INLINE const float& operator[](int idx) const { return ((float*)(&data))[idx]; }
         TSIMD_INLINE vec<float,8>& operator+=(const vec<float,8>& rhs){
             data = _mm256_add_ps(data,rhs.data);
             return *this;
@@ -42,8 +44,8 @@ namespace TSimd{
         __m256 data;
         enum{ size = 8 };
         friend std::ostream& operator<<(std::ostream& out, vec<float,8> v){
-            out<<((float*)&v.data)[0]<<" "<<((float*)&v.data)[1]<<" "<<((float*)&v.data)[2]<<" "<<((float*)&v.data)[3];
-            out<<" "<<((float*)&v.data)[4]<<" "<<((float*)&v.data)[5]<<" "<<((float*)&v.data)[6]<<" "<<((float*)&v.data)[7];
+            out<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3];
+            out<<" "<<v[4]<<" "<<v[5]<<" "<<v[6]<<" "<<v[7];
             return out;
         }
     };
