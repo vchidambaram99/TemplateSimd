@@ -86,6 +86,10 @@ namespace TSimd{
 #include "src/ushort/vec8us.h"
 #include "src/ushort/vec16us.h"
 //LONGS
+#include "src/long/vec2l.h"
+#include "src/long/vec4l.h"
 //ULONGS
+#include "src/ulong/vec2ul.h"
+#include "src/ulong/vec4ul.h"
 
 #endif //TSIMD_H
