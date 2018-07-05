@@ -41,8 +41,33 @@ namespace TSimd{
         TSIMD_INLINE vec<double,2> operator/(const vec<double,2>& rhs) const {
             return vec<double,2>(_mm_div_pd(data,rhs.data));
         }
+        TSIMD_INLINE vec<double,2> operator&=(const vec<double,2>& rhs){
+            data = _mm_and_pd(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<double,2> operator|=(const vec<double,2>& rhs){
+            data = _mm_or_pd(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<double,2> operator^=(const vec<double,2>& rhs){
+            data = _mm_xor_pd(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<double,2> operator&(const vec<double,2>& rhs) const {
+            return vec<double,2>(_mm_and_pd(data,rhs.data));
+        }
+        TSIMD_INLINE vec<double,2> operator|(const vec<double,2>& rhs) const {
+            return vec<double,2>(_mm_or_pd(data,rhs.data));
+        }
+        TSIMD_INLINE vec<double,2> operator^(const vec<double,2>& rhs) const {
+            return vec<double,2>(_mm_xor_pd(data,rhs.data));
+        }
+        TSIMD_INLINE vec<double,2> operator~() const {
+            return vec<double,2>(_mm_xor_pd(data,_mm_castsi128_pd(_mm_set1_epi32(-1))));
+        }
         __m128d data;
         enum{ size = 2 };
+        enum{ bits = 128 };
         friend std::ostream& operator<<(std::ostream& out, vec<double,2> v){
             out<<v[0]<<" "<<v[1];
             return out;

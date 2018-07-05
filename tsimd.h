@@ -22,19 +22,19 @@ namespace TSimd{
         TSIMD_INLINE vec(T* a){ data = *a; }
         TSIMD_INLINE void store(T* a){ *a = data; }
         TSIMD_INLINE vec<T,1>& operator+=(const vec<T,1>& rhs){
-            data += rhs;
+            data += rhs.data;
             return *this;
         }
         TSIMD_INLINE vec<T,1>& operator-=(const vec<T,1>& rhs){
-            data -= rhs;
+            data -= rhs.data;
             return *this;
         }
         TSIMD_INLINE vec<T,1>& operator*=(const vec<T,1>& rhs){
-            data *= rhs;
+            data *= rhs.data;
             return *this;
         }
         TSIMD_INLINE vec<T,1>& operator/=(const vec<T,1>& rhs){
-            data /= rhs;
+            data /= rhs.data;
             return *this;
         }
         TSIMD_INLINE vec<T,1> operator+(const vec<T,1>& rhs) const {
@@ -49,12 +49,37 @@ namespace TSimd{
         TSIMD_INLINE vec<T,1> operator/(const vec<T,1>& rhs) const {
             return vec<T,1>(data/rhs.data);
         }
+        TSIMD_INLINE vec<T,1>& operator&=(const vec<T,1>& rhs){
+            data &= rhs.data;
+            return *this;
+        }
+        TSIMD_INLINE vec<T,1>& operator|=(const vec<T,1>& rhs){
+            data |= rhs.data;
+            return *this;
+        }
+        TSIMD_INLINE vec<T,1>& operator^=(const vec<T,1>& rhs){
+            data ^= rhs.data;
+            return *this;
+        }
+        TSIMD_INLINE vec<T,1> operator&(const vec<T,1>& rhs) const {
+            return vec<T,1>(data&rhs.data);
+        }
+        TSIMD_INLINE vec<T,1> operator|(const vec<T,1>& rhs) const {
+            return vec<T,1>(data|rhs.data);
+        }
+        TSIMD_INLINE vec<T,1> operator^(const vec<T,1>& rhs) const {
+            return vec<T,1>(data^rhs.data);
+        }
+        TSIMD_INLINE vec<T,1> operator~() const {
+            return vec<T,1>(~data);
+        }
         template<typename V>
         TSIMD_INLINE operator vec<V,1>(){ //cast to other vec types of the same size
             return vec<V,1>((V)data);
         }
         T data;
         enum{ size = 1 };
+        enum{ bits = sizeof(T) };
         friend std::ostream& operator<<(std::ostream& out, vec<T,1> v){
             out<<v.data;
             return out;

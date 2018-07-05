@@ -56,8 +56,33 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
+        TSIMD_INLINE vec<long,4> operator&=(const vec<long,4>& rhs){
+            data = _mm256_and_si256(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<long,4> operator|=(const vec<long,4>& rhs){
+            data = _mm256_or_si256(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<long,4> operator^=(const vec<long,4>& rhs){
+            data = _mm256_xor_si256(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<long,4> operator&(const vec<long,4>& rhs) const {
+            return vec<long,4>(_mm256_and_si256(data,rhs.data));
+        }
+        TSIMD_INLINE vec<long,4> operator|(const vec<long,4>& rhs) const {
+            return vec<long,4>(_mm256_or_si256(data,rhs.data));
+        }
+        TSIMD_INLINE vec<long,4> operator^(const vec<long,4>& rhs) const {
+            return vec<long,4>(_mm256_xor_si256(data,rhs.data));
+        }
+        TSIMD_INLINE vec<long,4> operator~() const {
+            return vec<long,4>(_mm256_xor_si256(data,_mm256_set1_epi32(-1)));
+        }
         __m256i data;
         enum{ size = 4 };
+        enum{ bits = 256 };
         friend std::ostream& operator<<(std::ostream& out, vec<long,4> v){
             out<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3];
             return out;

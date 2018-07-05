@@ -68,8 +68,33 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
+        TSIMD_INLINE vec<unsigned char,16> operator&=(const vec<unsigned char,16>& rhs){
+            data = _mm_and_si128(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator|=(const vec<unsigned char,16>& rhs){
+            data = _mm_or_si128(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator^=(const vec<unsigned char,16>& rhs){
+            data = _mm_xor_si128(data,rhs.data);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator&(const vec<unsigned char,16>& rhs) const {
+            return vec<unsigned char,16>(_mm_and_si128(data,rhs.data));
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator|(const vec<unsigned char,16>& rhs) const {
+            return vec<unsigned char,16>(_mm_or_si128(data,rhs.data));
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator^(const vec<unsigned char,16>& rhs) const {
+            return vec<unsigned char,16>(_mm_xor_si128(data,rhs.data));
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator~() const {
+            return vec<unsigned char,16>(_mm_xor_si128(data,_mm_set1_epi32(-1)));
+        }
         __m128i data;
         enum{ size = 16 };
+        enum{ bits = 128 };
         friend std::ostream& operator<<(std::ostream& out, vec<unsigned char, 16> v){
             out<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3];
             out<<" "<<v[4]<<" "<<v[5]<<" "<<v[6]<<" "<<v[7];
