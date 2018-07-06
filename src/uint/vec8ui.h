@@ -1,6 +1,8 @@
 #ifndef VEC8UI_H
 #define VEC8UI_H
 
+#include "../../tsimd.h"
+
 #ifdef __AVX2__
 namespace TSimd{
     template<> class vec<unsigned int,8>{

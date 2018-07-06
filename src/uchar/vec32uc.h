@@ -1,6 +1,8 @@
 #ifndef VEC32UC_H
 #define VEC32UC_H
 
+#include "../../tsimd.h"
+
 #ifdef __AVX2__
 namespace TSimd{
     template<> class vec<unsigned char,32>{

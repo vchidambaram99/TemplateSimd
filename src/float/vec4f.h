@@ -1,6 +1,8 @@
 #ifndef VEC4F_H
 #define VEC4F_H
 
+#include "../../tsimd.h"
+
 #ifdef __SSE__
 namespace TSimd{
     template<> class vec<float,4>{

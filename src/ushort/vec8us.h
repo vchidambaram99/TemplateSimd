@@ -1,6 +1,8 @@
 #ifndef VEC8US_H
 #define VEC8US_H
 
+#include "../../tsimd.h"
+
 #ifdef __SSE2__
 namespace TSimd{
     template<> class vec<unsigned short,8>{

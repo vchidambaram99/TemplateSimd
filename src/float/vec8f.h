@@ -1,6 +1,8 @@
 #ifndef VEC8F_H
 #define VEC8F_H
 
+#include "../../tsimd.h"
+
 #ifdef __AVX__
 namespace TSimd{
     template<> class vec<float,8>{

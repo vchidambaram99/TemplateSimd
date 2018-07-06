@@ -1,6 +1,8 @@
 #ifndef VEC4UL_H
 #define VEC4UL_H
 
+#include "../../tsimd.h"
+
 #ifdef __AVX2__
 namespace TSimd{
     template<> class vec<unsigned long,4>{

@@ -1,6 +1,8 @@
 #ifndef VEC16UC_H
 #define VEC16UC_H
 
+#include "../../tsimd.h"
+
 #ifdef __SSE2__
 namespace TSimd{
     template<> class vec<unsigned char,16>{
