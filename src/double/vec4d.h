@@ -1,5 +1,5 @@
-#ifndef VEC4D_H
-#define VEC4D_H
+#ifndef TSIMD_VEC4D_H
+#define TSIMD_VEC4D_H
 
 #include "../../tsimd.h"
 
@@ -43,15 +43,15 @@ namespace TSimd{
         TSIMD_INLINE vec<double,4> operator/(const vec<double,4>& rhs) const {
             return vec<double,4>(_mm256_div_pd(data,rhs.data));
         }
-        TSIMD_INLINE vec<double,4> operator&=(const vec<double,4>& rhs){
+        TSIMD_INLINE vec<double,4>& operator&=(const vec<double,4>& rhs){
             data = _mm256_and_pd(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<double,4> operator|=(const vec<double,4>& rhs){
+        TSIMD_INLINE vec<double,4>& operator|=(const vec<double,4>& rhs){
             data = _mm256_or_pd(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<double,4> operator^=(const vec<double,4>& rhs){
+        TSIMD_INLINE vec<double,4>& operator^=(const vec<double,4>& rhs){
             data = _mm256_xor_pd(data,rhs.data);
             return *this;
         }
@@ -78,4 +78,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //VEC4D_H
+#endif //TSIMD_VEC4D_H

@@ -1,5 +1,5 @@
-#ifndef VEC8UI_H
-#define VEC8UI_H
+#ifndef TSIMD_VEC8UI_H
+#define TSIMD_VEC8UI_H
 
 #include "../../tsimd.h"
 
@@ -76,6 +76,20 @@ namespace TSimd{
         TSIMD_INLINE vec<unsigned int,8> operator~() const {
             return vec<unsigned int,8>(_mm256_xor_si256(data,_mm256_set1_epi32(-1)));
         }
+        TSIMD_INLINE vec<unsigned int,8>& operator<<=(const int& shift){
+            data = _mm256_slli_epi32(data,shift);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned int,8>& operator>>=(const int& shift){
+            data = _mm256_srli_epi32(data,shift);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned int,8> operator<<(const int& shift) const {
+            return vec<unsigned int,8>(_mm256_slli_epi32(data,shift));
+        }
+        TSIMD_INLINE vec<unsigned int,8> operator>>(const int& shift) const {
+            return vec<unsigned int,8>(_mm256_srli_epi32(data,shift));
+        }
         __m256i data;
         enum{ size = 8 };
         enum{ bits = 256 };
@@ -88,4 +102,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //VEC8UI_H
+#endif //TSIMD_VEC8UI_H

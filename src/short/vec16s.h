@@ -1,5 +1,5 @@
-#ifndef VEC16S_H
-#define VEC16S_H
+#ifndef TSIMD_VEC16S_H
+#define TSIMD_VEC16S_H
 
 #include "../../tsimd.h"
 
@@ -62,15 +62,15 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
-        TSIMD_INLINE vec<short,16> operator&=(const vec<short,16>& rhs){
+        TSIMD_INLINE vec<short,16>& operator&=(const vec<short,16>& rhs){
             data = _mm256_and_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<short,16> operator|=(const vec<short,16>& rhs){
+        TSIMD_INLINE vec<short,16>& operator|=(const vec<short,16>& rhs){
             data = _mm256_or_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<short,16> operator^=(const vec<short,16>& rhs){
+        TSIMD_INLINE vec<short,16>& operator^=(const vec<short,16>& rhs){
             data = _mm256_xor_si256(data,rhs.data);
             return *this;
         }
@@ -86,6 +86,20 @@ namespace TSimd{
         TSIMD_INLINE vec<short,16> operator~() const {
             return vec<short,16>(_mm256_xor_si256(data,_mm256_set1_epi32(-1)));
         }
+        TSIMD_INLINE vec<short,16>& operator<<=(const int& shift){
+            data = _mm256_slli_epi16(data,shift);
+            return *this;
+        }
+        TSIMD_INLINE vec<short,16>& operator>>=(const int& shift){
+            data = _mm256_srai_epi16(data,shift);
+            return *this;
+        }
+        TSIMD_INLINE vec<short,16> operator<<(const int& shift) const {
+            return vec<short,16>(_mm256_slli_epi16(data,shift));
+        }
+        TSIMD_INLINE vec<short,16> operator>>(const int& shift) const {
+            return vec<short,16>(_mm256_srai_epi16(data,shift));
+        }
         __m256i data;
         enum{ size = 16 };
         enum{ bits = 256 };
@@ -100,4 +114,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //VEC16S_H
+#endif //TSIMD_VEC16S_H

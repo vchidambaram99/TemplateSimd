@@ -1,5 +1,5 @@
-#ifndef VEC16UC_H
-#define VEC16UC_H
+#ifndef TSIMD_VEC16UC_H
+#define TSIMD_VEC16UC_H
 
 #include "../../tsimd.h"
 
@@ -70,15 +70,15 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
-        TSIMD_INLINE vec<unsigned char,16> operator&=(const vec<unsigned char,16>& rhs){
+        TSIMD_INLINE vec<unsigned char,16>& operator&=(const vec<unsigned char,16>& rhs){
             data = _mm_and_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<unsigned char,16> operator|=(const vec<unsigned char,16>& rhs){
+        TSIMD_INLINE vec<unsigned char,16>& operator|=(const vec<unsigned char,16>& rhs){
             data = _mm_or_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<unsigned char,16> operator^=(const vec<unsigned char,16>& rhs){
+        TSIMD_INLINE vec<unsigned char,16>& operator^=(const vec<unsigned char,16>& rhs){
             data = _mm_xor_si128(data,rhs.data);
             return *this;
         }
@@ -94,6 +94,24 @@ namespace TSimd{
         TSIMD_INLINE vec<unsigned char,16> operator~() const {
             return vec<unsigned char,16>(_mm_xor_si128(data,_mm_set1_epi32(-1)));
         }
+        TSIMD_INLINE vec<unsigned char,16>& operator<<=(const int& shift){
+            __m128i a = _mm_slli_epi16(data,8);
+            data = _mm_and_si128(a,_mm_set1_epi8(0xFF<<shift));
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,16>& operator>>=(const int& shift){
+            __m128i a = _mm_srli_epi16(data,shift);
+            data = _mm_and_si128(a,_mm_set1_epi8(((unsigned int)(0xFF))>>shift));
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator<<(const int& shift) const {
+            __m128i a = _mm_slli_epi16(data,8);
+            return vec<unsigned char,16>(_mm_and_si128(a,_mm_set1_epi8(0xFF<<shift)));
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator>>(const int& shift) const {
+            __m128i a = _mm_srli_epi16(data,shift);
+            return vec<unsigned char,16>(_mm_and_si128(a,_mm_set1_epi8(((unsigned int)(0xFF))>>shift)));
+        }
         __m128i data;
         enum{ size = 16 };
         enum{ bits = 128 };
@@ -108,4 +126,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //VEC16UC_H
+#endif //TSIMD_VEC16UC_H

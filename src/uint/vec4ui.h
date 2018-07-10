@@ -1,5 +1,5 @@
-#ifndef VEC4UI_H
-#define VEC4UI_H
+#ifndef TSIMD_VEC4UI_H
+#define TSIMD_VEC4UI_H
 
 #include "../../tsimd.h"
 
@@ -65,15 +65,15 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
-        TSIMD_INLINE vec<unsigned int, 4> operator&=(const vec<unsigned int, 4>& rhs){
+        TSIMD_INLINE vec<unsigned int, 4>& operator&=(const vec<unsigned int, 4>& rhs){
             data = _mm_and_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<unsigned int, 4> operator|=(const vec<unsigned int, 4>& rhs){
+        TSIMD_INLINE vec<unsigned int, 4>& operator|=(const vec<unsigned int, 4>& rhs){
             data = _mm_or_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<unsigned int, 4> operator^=(const vec<unsigned int, 4>& rhs){
+        TSIMD_INLINE vec<unsigned int, 4>& operator^=(const vec<unsigned int, 4>& rhs){
             data = _mm_xor_si128(data,rhs.data);
             return *this;
         }
@@ -89,6 +89,20 @@ namespace TSimd{
         TSIMD_INLINE vec<unsigned int, 4> operator~() const {
             return vec<unsigned int, 4>(_mm_xor_si128(data,_mm_set1_epi32(-1)));
         }
+        TSIMD_INLINE vec<unsigned int,4>& operator<<=(const int& shift){
+            data = _mm_slli_epi32(data,shift);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned int,4>& operator>>=(const int& shift){
+            data = _mm_srli_epi32(data,shift);
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned int,4> operator<<(const int& shift) const {
+            return vec<unsigned int,4>(_mm_slli_epi32(data,shift));
+        }
+        TSIMD_INLINE vec<unsigned int,4> operator>>(const int& shift) const {
+            return vec<unsigned int,4>(_mm_srli_epi32(data,shift));
+        }
         __m128i data;
         enum{ size = 4 };
         enum{ bits = 128 };
@@ -100,4 +114,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //VEC4UI_H
+#endif //TSIMD_VEC4UI_H

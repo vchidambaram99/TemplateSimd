@@ -1,5 +1,5 @@
-#ifndef VEC32UC_H
-#define VEC32UC_H
+#ifndef TSIMD_VEC32UC_H
+#define TSIMD_VEC32UC_H
 
 #include "../../tsimd.h"
 
@@ -87,15 +87,15 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
-        TSIMD_INLINE vec<unsigned char,32> operator&=(const vec<unsigned char,32>& rhs){
+        TSIMD_INLINE vec<unsigned char,32>& operator&=(const vec<unsigned char,32>& rhs){
             data = _mm256_and_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<unsigned char,32> operator|=(const vec<unsigned char,32>& rhs){
+        TSIMD_INLINE vec<unsigned char,32>& operator|=(const vec<unsigned char,32>& rhs){
             data = _mm256_or_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<unsigned char,32> operator^=(const vec<unsigned char,32>& rhs){
+        TSIMD_INLINE vec<unsigned char,32>& operator^=(const vec<unsigned char,32>& rhs){
             data = _mm256_xor_si256(data,rhs.data);
             return *this;
         }
@@ -110,6 +110,24 @@ namespace TSimd{
         }
         TSIMD_INLINE vec<unsigned char,32> operator~() const {
             return vec<unsigned char,32>(_mm256_xor_si256(data,_mm256_set1_epi32(-1)));
+        }
+        TSIMD_INLINE vec<unsigned char,32>& operator<<=(const int& shift){
+            __m256i a = _mm256_slli_epi16(data,8);
+            data = _mm256_and_si256(a,_mm256_set1_epi8(0xFF<<shift));
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,32>& operator>>=(const int& shift){
+            __m256i a = _mm256_srli_epi16(data,shift);
+            data = _mm256_and_si256(a,_mm256_set1_epi8(((unsigned int)(0xFF))>>shift));
+            return *this;
+        }
+        TSIMD_INLINE vec<unsigned char,32> operator<<(const int& shift) const {
+            __m256i a = _mm256_slli_epi16(data,8);
+            return vec<unsigned char,32>(_mm256_and_si256(a,_mm256_set1_epi8(0xFF<<shift)));
+        }
+        TSIMD_INLINE vec<unsigned char,32> operator>>(const int& shift) const {
+            __m256i a = _mm256_srli_epi16(data,shift);
+            return vec<unsigned char,32>(_mm256_and_si256(a,_mm256_set1_epi8(((unsigned int)(0xFF))>>shift)));
         }
         __m256i data;
         enum{ size = 32 };
@@ -129,4 +147,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //VEC32UC_H
+#endif //TSIMD_VEC32UC_H

@@ -21,6 +21,8 @@ namespace TSimd{
         TSIMD_INLINE vec(T a){ data = a; }
         TSIMD_INLINE vec(T* a){ data = *a; }
         TSIMD_INLINE void store(T* a){ *a = data; }
+        TSIMD_INLINE T& operator[](int idx){ return data; } //for api consistency
+        TSIMD_INLINE const T& operator[](int idx) const { return data; } //for api consistency
         TSIMD_INLINE vec<T,1>& operator+=(const vec<T,1>& rhs){
             data += rhs.data;
             return *this;
@@ -86,6 +88,7 @@ namespace TSimd{
         }
     };
 }
+#include "src/reinterpret.h"
 //FLOATS
 #include "src/float/vec4f.h"
 #include "src/float/vec8f.h"
