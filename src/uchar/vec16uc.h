@@ -112,6 +112,24 @@ namespace TSimd{
             __m128i a = _mm_srli_epi16(data,shift);
             return vec<unsigned char,16>(_mm_and_si128(a,_mm_set1_epi8(((unsigned int)(0xFF))>>shift)));
         }
+        TSIMD_INLINE vec<unsigned char,16> operator==(const vec<unsigned char,16>& a) const {
+            return _mm_cmpeq_epi8(data,a.data);
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator!=(const vec<unsigned char,16>& a) const {
+            return ~(*this==a);
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator>(const vec<unsigned char,16>& a) const {
+            return ~(*this<=a);
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator>=(const vec<unsigned char,16>& a) const {
+            return (*this)==_mm_max_epu8(data,a.data);
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator<(const vec<unsigned char,16>& a) const {
+            return a>*this;
+        }
+        TSIMD_INLINE vec<unsigned char,16> operator<=(const vec<unsigned char,16>& a) const {
+            return (*this)==_mm_min_epu8(data,a.data);
+        }
         __m128i data;
         enum{ size = 16 };
         enum{ bits = 128 };

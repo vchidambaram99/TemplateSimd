@@ -79,6 +79,24 @@ namespace TSimd{
         TSIMD_INLINE operator vec<V,1>(){ //cast to other vec types of the same size
             return vec<V,1>((V)data);
         }
+        TSIMD_INLINE bool operator==(const vec<T,1>& a) const {
+            return data==a;
+        }
+        TSIMD_INLINE bool operator!=(const vec<T,1>& a) const {
+            return data!=a;
+        }
+        TSIMD_INLINE bool operator>(const vec<T,1>& a) const {
+            return data>a;
+        }
+        TSIMD_INLINE bool operator>=(const vec<T,1>& a) const {
+            return data>=a;
+        }
+        TSIMD_INLINE bool operator<(const vec<T,1>& a) const {
+            return data>a;
+        }
+        TSIMD_INLINE bool operator<=(const vec<T,1>& a) const {
+            return data>=a;
+        }
         T data;
         enum{ size = 1 };
         enum{ bits = sizeof(T) };
@@ -89,6 +107,19 @@ namespace TSimd{
     };
 }
 #include "src/reinterpret.h"
+namespace TSimd{ //equivalent of ternary operator
+/*
+Note: On my computer, microbenchmarking shows that this method is pretty much as fast as a blend
+*/
+    template<typename T>
+    TSIMD_INLINE T select(const T& cond, const T& a, const T& b){
+        return (a&cond)|(b&~cond);
+    }
+    template<typename T>
+    TSIMD_INLINE vec<T,1> select(const bool& cond, const vec<T,1>& a, const vec<T,1>& b){
+        return (cond)?a:b;
+    }
+}
 //FLOATS
 #include "src/float/vec4f.h"
 #include "src/float/vec8f.h"

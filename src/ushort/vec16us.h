@@ -101,6 +101,24 @@ namespace TSimd{
         TSIMD_INLINE vec<unsigned short,16> operator>>(const int& shift) const {
             return vec<unsigned short,16>(_mm256_srli_epi16(data,shift));
         }
+        TSIMD_INLINE vec<unsigned short,16> operator==(const vec<unsigned short,16>& a) const {
+            return _mm256_cmpeq_epi16(data,a.data);
+        }
+        TSIMD_INLINE vec<unsigned short,16> operator!=(const vec<unsigned short,16>& a) const {
+            return ~(*this==a);
+        }
+        TSIMD_INLINE vec<unsigned short,16> operator>(const vec<unsigned short,16>& a) const {
+            return ~(*this<=a);
+        }
+        TSIMD_INLINE vec<unsigned short,16> operator>=(const vec<unsigned short,16>& a) const {
+            return (*this)==_mm256_max_epu16(data,a.data);
+        }
+        TSIMD_INLINE vec<unsigned short,16> operator<(const vec<unsigned short,16>& a) const {
+            return a>*this;
+        }
+        TSIMD_INLINE vec<unsigned short,16> operator<=(const vec<unsigned short,16>& a) const {
+            return (*this)==_mm256_min_epu16(data,a.data);
+        }
         __m256i data;
         enum{ size = 16 };
         enum{ bits = 256 };

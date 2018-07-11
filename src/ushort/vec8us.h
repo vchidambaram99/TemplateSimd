@@ -92,6 +92,41 @@ namespace TSimd{
         TSIMD_INLINE vec<unsigned short,8> operator>>(const int& shift) const {
             return vec<unsigned short,8>(_mm_srli_epi16(data,shift));
         }
+        TSIMD_INLINE vec<unsigned short,8> operator==(const vec<unsigned short,8>& a) const {
+            return _mm_cmpeq_epi16(data,a.data);
+        }
+        TSIMD_INLINE vec<unsigned short,8> operator!=(const vec<unsigned short,8>& a) const {
+            return ~(*this==a);
+        }
+        TSIMD_INLINE vec<unsigned short,8> operator>(const vec<unsigned short,8>& a) const {
+            return ~(*this<=a);
+        }
+        TSIMD_INLINE vec<unsigned short,8> operator>=(const vec<unsigned short,8>& a) const {
+            #ifdef __SSE4_1__
+                return (*this)==_mm_max_epu16(data,a.data);
+            #else //TODO think of something better
+                vec<unsigned short,8> b;
+                b[0] = (*this)[0]>=a[0];
+                b[1] = (*this)[1]>=a[1];
+                b[2] = (*this)[2]>=a[2];
+                b[3] = (*this)[3]>=a[3];
+                b[4] = (*this)[4]>=a[4];
+                b[5] = (*this)[5]>=a[5];
+                b[6] = (*this)[6]>=a[6];
+                b[7] = (*this)[7]>=a[7];
+                return ~b+1;
+            #endif
+        }
+        TSIMD_INLINE vec<unsigned short,8> operator<(const vec<unsigned short,8>& a) const {
+            return a>*this;
+        }
+        TSIMD_INLINE vec<unsigned short,8> operator<=(const vec<unsigned short,8>& a) const {
+            #ifdef __SSE4_1__
+                return (*this)==_mm_min_epu16(data,a.data);
+            #else
+                return a>=*this;
+            #endif
+        }
         __m128i data;
         enum{ size = 8 };
         enum{ bits = 128 };

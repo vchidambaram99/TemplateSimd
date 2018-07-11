@@ -131,6 +131,24 @@ namespace TSimd{
             __m256i lo = _mm256_srai_epi16(_mm256_unpacklo_epi8(data,data),shift+8);
             return vec<char,32>(_mm256_packs_epi16(lo,hi));
         }
+        TSIMD_INLINE vec<char,32> operator==(const vec<char,32>& a) const {
+            return _mm256_cmpeq_epi8(data,a.data);
+        }
+        TSIMD_INLINE vec<char,32> operator!=(const vec<char,32>& a) const {
+            return ~(*this==a);
+        }
+        TSIMD_INLINE vec<char,32> operator>(const vec<char,32>& a) const {
+            return _mm256_cmpgt_epi8(data,a.data);
+        }
+        TSIMD_INLINE vec<char,32> operator>=(const vec<char,32>& a) const {
+            return (*this>a)|(*this==a);
+        }
+        TSIMD_INLINE vec<char,32> operator<(const vec<char,32>& a) const {
+            return a>*this;
+        }
+        TSIMD_INLINE vec<char,32> operator<=(const vec<char,32>& a) const {
+            return (*this<a)|(*this==a);
+        }
         __m256i data;
         enum{ size = 32 };
         enum{ bits = 256 };

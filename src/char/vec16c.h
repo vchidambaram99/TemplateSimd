@@ -114,6 +114,24 @@ namespace TSimd{
             __m128i lo = _mm_srai_epi16(_mm_unpacklo_epi8(data,data),shift+8);
             return vec<char,16>(_mm_packs_epi16(lo,hi));
         }
+        TSIMD_INLINE vec<char,16> operator==(const vec<char,16>& a) const {
+            return _mm_cmpeq_epi8(data,a.data);
+        }
+        TSIMD_INLINE vec<char,16> operator!=(const vec<char,16>& a) const {
+            return ~(*this==a);
+        }
+        TSIMD_INLINE vec<char,16> operator>(const vec<char,16>& a) const {
+            return _mm_cmpgt_epi8(data,a.data);
+        }
+        TSIMD_INLINE vec<char,16> operator>=(const vec<char,16>& a) const {
+            return (*this>a)|(*this==a);
+        }
+        TSIMD_INLINE vec<char,16> operator<(const vec<char,16>& a) const {
+            return _mm_cmplt_epi8(data,a.data);
+        }
+        TSIMD_INLINE vec<char,16> operator<=(const vec<char,16>& a) const {
+            return (*this<a)|(*this==a);
+        }
         __m128i data;
         enum{ size = 16 };
         enum{ bits = 128 };

@@ -67,6 +67,25 @@ namespace TSimd{
         TSIMD_INLINE vec<double,4> operator~() const {
             return vec<double,4>(_mm256_xor_pd(data,_mm256_castsi256_pd(_mm256_set1_epi32(-1))));
         }
+        //TODO add macros so that user can decide how fp comparisons should be done (ordered/not) and (signaling/not)
+        TSIMD_INLINE vec<double,4> operator==(const vec<double,4>& a) const {
+            return _mm256_cmp_pd(data,a.data,_CMP_EQ_OQ);
+        }
+        TSIMD_INLINE vec<double,4> operator!=(const vec<double,4>& a) const {
+            return _mm256_cmp_pd(data,a.data,_CMP_NEQ_OQ);
+        }
+        TSIMD_INLINE vec<double,4> operator>(const vec<double,4>& a) const {
+            return _mm256_cmp_pd(data,a.data,_CMP_GT_OQ);
+        }
+        TSIMD_INLINE vec<double,4> operator>=(const vec<double,4>& a) const {
+            return _mm256_cmp_pd(data,a.data,_CMP_GE_OQ);
+        }
+        TSIMD_INLINE vec<double,4> operator<(const vec<double,4>& a) const {
+            return _mm256_cmp_pd(data,a.data,_CMP_LT_OQ);
+        }
+        TSIMD_INLINE vec<double,4> operator<=(const vec<double,4>& a) const {
+            return _mm256_cmp_pd(data,a.data,_CMP_LE_OQ);
+        }
         __m256d data;
         enum{ size = 4 };
         enum{ bits = 256 };

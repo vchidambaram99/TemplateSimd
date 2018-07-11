@@ -96,6 +96,24 @@ namespace TSimd{
         TSIMD_INLINE vec<long,4> operator>>(const int& shift) const {
             return vec<long,4>(_mm256_srai_epi64(data,shift));
         }
+        TSIMD_INLINE vec<long,4> operator==(const vec<long,4>& a) const {
+            return _mm256_cmpeq_epi64(data,a.data);
+        }
+        TSIMD_INLINE vec<long,4> operator!=(const vec<long,4>& a) const {
+            return ~(*this==a);
+        }
+        TSIMD_INLINE vec<long,4> operator>(const vec<long,4>& a) const {
+            return _mm256_cmpgt_epi64(data,a.data);
+        }
+        TSIMD_INLINE vec<long,4> operator>=(const vec<long,4>& a) const {
+            return (*this>a)|(*this==a);
+        }
+        TSIMD_INLINE vec<long,4> operator<(const vec<long,4>& a) const {
+            return a>*this;
+        }
+        TSIMD_INLINE vec<long,4> operator<=(const vec<long,4>& a) const {
+            return (*this<a)|(*this==a);
+        }
         __m256i data;
         enum{ size = 4 };
         enum{ bits = 256 };
