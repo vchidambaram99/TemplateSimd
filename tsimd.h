@@ -130,43 +130,33 @@ Note: On my computer, microbenchmarking shows that this method is pretty much as
         return (cond)?a:b;
     }
 }
-//FLOATS
 #include "src/float/vec4f.h"
 #include "src/float/vec8f.h"
-//DOUBLES
 #include "src/double/vec2d.h"
 #include "src/double/vec4d.h"
-//INTS
-#include "src/int/vec4i.h"
-#include "src/int/vec8i.h"
-//UINTS
-#include "src/uint/vec4ui.h"
-#include "src/uint/vec8ui.h"
-//CHARS
+#include "src/int32/vec4int32.h"
+#include "src/int32/vec8int32.h"
+#include "src/uint32/vec4uint32.h"
+#include "src/uint32/vec8uint32.h"
 #ifdef TSIMD_USE_SIGNED_CHARS
-    #include "src/char/vec16c.h"
-    #include "src/char/vec32c.h"
+    #include "src/int8/vec16c.h"
+    #include "src/int8/vec32c.h"
 #endif
-#include "src/char/vec16int8.h"
-#include "src/char/vec32int8.h"
-//UCHARS
+#include "src/int8/vec16int8.h"
+#include "src/int8/vec32int8.h"
 #ifdef TSIMD_USE_UNSIGNED_CHARS
-    #include "src/uchar/vec16uc.h"
-    #include "src/uchar/vec32uc.h"
+    #include "src/uint8/vec16uc.h"
+    #include "src/uint8/vec32uc.h"
 #endif
-#include "src/uchar/vec16uint8.h"
-#include "src/uchar/vec32uint8.h"
-//SHORTS
-#include "src/short/vec8s.h"
-#include "src/short/vec16s.h"
-//USHORTS
-#include "src/ushort/vec8us.h"
-#include "src/ushort/vec16us.h"
-//LONGS
-#include "src/long/vec2l.h"
-#include "src/long/vec4l.h"
-//ULONGS
-#include "src/ulong/vec2ul.h"
-#include "src/ulong/vec4ul.h"
+#include "src/uint8/vec16uint8.h"
+#include "src/uint8/vec32uint8.h"
+#include "src/int16/vec8int16.h"
+#include "src/int16/vec16int16.h"
+#include "src/uint16/vec8uint16.h"
+#include "src/uint16/vec16uint16.h"
+#include "src/int64/vec2int64.h"
+#include "src/int64/vec4int64.h"
+#include "src/uint64/vec2uint64.h"
+#include "src/uint64/vec4uint64.h"
 
 #endif //TSIMD_H
