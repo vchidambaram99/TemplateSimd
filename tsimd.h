@@ -3,6 +3,8 @@
 
 #include <immintrin.h>
 #include <ostream>
+#include <cstdint>
+#include <climits>
 
 //if this fails, then you probably need a newer compiler
 #if _MSC_VER >= 1400 || __ICC || __ICL
@@ -11,6 +13,14 @@
     #define TSIMD_INLINE inline __attribute__((always_inline))
 #else
     #define TSIMD_INLINE inline
+#endif
+
+#if(!defined(TSIMD_USE_SIGNED_CHARS)&&!defined(TSIMD_USE_UNSIGNED_CHARS))
+    #if(CHAR_MIN<0)
+        #define TSIMD_USE_SIGNED_CHARS
+    #else
+        #define TSIMD_USE_UNSIGNED_CHARS
+    #endif
 #endif
 
 namespace TSimd{
@@ -133,11 +143,19 @@ Note: On my computer, microbenchmarking shows that this method is pretty much as
 #include "src/uint/vec4ui.h"
 #include "src/uint/vec8ui.h"
 //CHARS
-#include "src/char/vec16c.h"
-#include "src/char/vec32c.h"
+#ifdef TSIMD_USE_SIGNED_CHARS
+    #include "src/char/vec16c.h"
+    #include "src/char/vec32c.h"
+#endif
+#include "src/char/vec16int8.h"
+#include "src/char/vec32int8.h"
 //UCHARS
-#include "src/uchar/vec16uc.h"
-#include "src/uchar/vec32uc.h"
+#ifdef TSIMD_USE_UNSIGNED_CHARS
+    #include "src/uchar/vec16uc.h"
+    #include "src/uchar/vec32uc.h"
+#endif
+#include "src/uchar/vec16uint8.h"
+#include "src/uchar/vec32uint8.h"
 //SHORTS
 #include "src/short/vec8s.h"
 #include "src/short/vec16s.h"

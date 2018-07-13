@@ -13,8 +13,8 @@ namespace TSimd{
         TSIMD_INLINE vec(__m128d a){ data = a; }
         TSIMD_INLINE vec(double a, double b){ data = _mm_set_pd(b,a); }
         TSIMD_INLINE void store(double* a){ _mm_storeu_pd(a,data); }
-        TSIMD_INLINE double& operator[](int idx){ return ((double*)(&data))[idx]; }
-        TSIMD_INLINE const double& operator[](int idx) const { return ((double*)(&data))[idx]; }
+        TSIMD_INLINE double& operator[](std::size_t idx){ return ((double*)(&data))[idx]; }
+        TSIMD_INLINE const double& operator[](std::size_t idx) const { return ((double*)(&data))[idx]; }
         TSIMD_INLINE vec<double,2>& operator+=(const vec<double,2>& rhs){
             data = _mm_add_pd(data,rhs.data);
             return *this;

@@ -1,33 +1,33 @@
-#ifndef TSIMD_VEC8I_H
-#define TSIMD_VEC8I_H
+#ifndef TSIMD_VEC8INT32_H
+#define TSIMD_VEC8INT32_H
 
 #include "../../tsimd.h"
 
 #ifdef __AVX2__
 namespace TSimd{
-    template<> class vec<int,8>{
+    template<> class vec<int32_t,8>{
     public:
         TSIMD_INLINE vec(){}
-        TSIMD_INLINE vec(int a){ data = _mm256_set1_epi32(a); }
-        TSIMD_INLINE vec(int* a){ data = _mm256_loadu_si256((__m256i*)a); }
+        TSIMD_INLINE vec(int32_t a){ data = _mm256_set1_epi32(a); }
+        TSIMD_INLINE vec(int32_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
         TSIMD_INLINE vec(__m256i a){ data = a; }
-        TSIMD_INLINE vec(int a, int b, int c, int d, int e, int f, int g, int h){ data = _mm256_set_epi32(h,g,f,e,d,c,b,a); }
-        TSIMD_INLINE void store(int* a){ _mm256_storeu_si256((__m256i*)a,data); }
-        TSIMD_INLINE int& operator[](int idx){ return ((int*)(&data))[idx]; }
-        TSIMD_INLINE const int& operator[](int idx) const { return ((int*)(&data))[idx]; }
-        TSIMD_INLINE vec<int,8>& operator+=(const vec<int,8>& rhs){
+        TSIMD_INLINE vec(int32_t a, int32_t b, int32_t c, int32_t d, int32_t e, int32_t f, int32_t g, int32_t h){ data = _mm256_set_epi32(h,g,f,e,d,c,b,a); }
+        TSIMD_INLINE void store(int32_t* a){ _mm256_storeu_si256((__m256i*)a,data); }
+        TSIMD_INLINE int32_t& operator[](std::size_t idx){ return ((int32_t*)(&data))[idx]; }
+        TSIMD_INLINE const int32_t& operator[](std::size_t idx) const { return ((int32_t*)(&data))[idx]; }
+        TSIMD_INLINE vec<int32_t,8>& operator+=(const vec<int32_t,8>& rhs){
             data = _mm256_add_epi32(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<int,8>& operator-=(const vec<int,8>& rhs){
+        TSIMD_INLINE vec<int32_t,8>& operator-=(const vec<int32_t,8>& rhs){
             data = _mm256_sub_epi32(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<int,8>& operator*=(const vec<int,8>& rhs){
+        TSIMD_INLINE vec<int32_t,8>& operator*=(const vec<int32_t,8>& rhs){
             data = _mm256_mullo_epi32(data,rhs.data);
             return *this;
         }
-        inline vec<int,8>& operator/=(const vec<int,8>& rhs){ //TODO find simd integer division algorithm
+        inline vec<int32_t,8>& operator/=(const vec<int32_t,8>& rhs){ //TODO find simd integer division algorithm
             (*this)[0]/=rhs[0];
             (*this)[1]/=rhs[1];
             (*this)[2]/=rhs[2];
@@ -38,80 +38,80 @@ namespace TSimd{
             (*this)[7]/=rhs[7];
             return *this;
         }
-        TSIMD_INLINE vec<int,8> operator+(const vec<int,8>& rhs) const {
-            return vec<int,8>(_mm256_add_epi32(data,rhs.data));
+        TSIMD_INLINE vec<int32_t,8> operator+(const vec<int32_t,8>& rhs) const {
+            return vec<int32_t,8>(_mm256_add_epi32(data,rhs.data));
         }
-        TSIMD_INLINE vec<int,8> operator-(const vec<int,8>& rhs) const {
-            return vec<int,8>(_mm256_sub_epi32(data,rhs.data));
+        TSIMD_INLINE vec<int32_t,8> operator-(const vec<int32_t,8>& rhs) const {
+            return vec<int32_t,8>(_mm256_sub_epi32(data,rhs.data));
         }
-        TSIMD_INLINE vec<int,8> operator*(const vec<int,8>& rhs) const {
-            return vec<int,8>(_mm256_mullo_epi32(data,rhs.data));
+        TSIMD_INLINE vec<int32_t,8> operator*(const vec<int32_t,8>& rhs) const {
+            return vec<int32_t,8>(_mm256_mullo_epi32(data,rhs.data));
         }
-        TSIMD_INLINE vec<int,8> operator/(const vec<int,8>& rhs) const { //TODO find simd integer division algorithm
-            vec<int,8> r(data);
+        TSIMD_INLINE vec<int32_t,8> operator/(const vec<int32_t,8>& rhs) const { //TODO find simd integer division algorithm
+            vec<int32_t,8> r(data);
             r/=rhs;
             return r;
         }
-        TSIMD_INLINE vec<int,8>& operator&=(const vec<int,8>& rhs){
+        TSIMD_INLINE vec<int32_t,8>& operator&=(const vec<int32_t,8>& rhs){
             data = _mm256_and_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<int,8>& operator|=(const vec<int,8>& rhs){
+        TSIMD_INLINE vec<int32_t,8>& operator|=(const vec<int32_t,8>& rhs){
             data = _mm256_or_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<int,8>& operator^=(const vec<int,8>& rhs){
+        TSIMD_INLINE vec<int32_t,8>& operator^=(const vec<int32_t,8>& rhs){
             data = _mm256_xor_si256(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<int,8> operator&(const vec<int,8>& rhs) const {
-            return vec<int,8>(_mm256_and_si256(data,rhs.data));
+        TSIMD_INLINE vec<int32_t,8> operator&(const vec<int32_t,8>& rhs) const {
+            return vec<int32_t,8>(_mm256_and_si256(data,rhs.data));
         }
-        TSIMD_INLINE vec<int,8> operator|(const vec<int,8>& rhs) const {
-            return vec<int,8>(_mm256_or_si256(data,rhs.data));
+        TSIMD_INLINE vec<int32_t,8> operator|(const vec<int32_t,8>& rhs) const {
+            return vec<int32_t,8>(_mm256_or_si256(data,rhs.data));
         }
-        TSIMD_INLINE vec<int,8> operator^(const vec<int,8>& rhs) const {
-            return vec<int,8>(_mm256_xor_si256(data,rhs.data));
+        TSIMD_INLINE vec<int32_t,8> operator^(const vec<int32_t,8>& rhs) const {
+            return vec<int32_t,8>(_mm256_xor_si256(data,rhs.data));
         }
-        TSIMD_INLINE vec<int,8> operator~() const {
-            return vec<int,8>(_mm256_xor_si256(data,_mm256_set1_epi32(-1)));
+        TSIMD_INLINE vec<int32_t,8> operator~() const {
+            return vec<int32_t,8>(_mm256_xor_si256(data,_mm256_set1_epi32(-1)));
         }
-        TSIMD_INLINE vec<int,8>& operator<<=(const int& shift){
+        TSIMD_INLINE vec<int32_t,8>& operator<<=(const int& shift){
             data = _mm256_slli_epi32(data,shift);
             return *this;
         }
-        TSIMD_INLINE vec<int,8>& operator>>=(const int& shift){
+        TSIMD_INLINE vec<int32_t,8>& operator>>=(const int& shift){
             data = _mm256_srai_epi32(data,shift);
             return *this;
         }
-        TSIMD_INLINE vec<int,8> operator<<(const int& shift) const {
-            return vec<int,8>(_mm256_slli_epi32(data,shift));
+        TSIMD_INLINE vec<int32_t,8> operator<<(const int& shift) const {
+            return vec<int32_t,8>(_mm256_slli_epi32(data,shift));
         }
-        TSIMD_INLINE vec<int,8> operator>>(const int& shift) const {
-            return vec<int,8>(_mm256_srai_epi32(data,shift));
+        TSIMD_INLINE vec<int32_t,8> operator>>(const int& shift) const {
+            return vec<int32_t,8>(_mm256_srai_epi32(data,shift));
         }
-        TSIMD_INLINE vec<int,8> operator==(const vec<int,8>& a) const {
+        TSIMD_INLINE vec<int32_t,8> operator==(const vec<int32_t,8>& a) const {
             return _mm256_cmpeq_epi32(data,a.data);
         }
-        TSIMD_INLINE vec<int,8> operator!=(const vec<int,8>& a) const {
+        TSIMD_INLINE vec<int32_t,8> operator!=(const vec<int32_t,8>& a) const {
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<int,8> operator>(const vec<int,8>& a) const {
+        TSIMD_INLINE vec<int32_t,8> operator>(const vec<int32_t,8>& a) const {
             return _mm256_cmpgt_epi32(data,a.data);
         }
-        TSIMD_INLINE vec<int,8> operator>=(const vec<int,8>& a) const {
+        TSIMD_INLINE vec<int32_t,8> operator>=(const vec<int32_t,8>& a) const {
             return (*this>a)|(*this==a);
         }
-        TSIMD_INLINE vec<int,8> operator<(const vec<int,8>& a) const {
+        TSIMD_INLINE vec<int32_t,8> operator<(const vec<int32_t,8>& a) const {
             return a>*this;
         }
-        TSIMD_INLINE vec<int,8> operator<=(const vec<int,8>& a) const {
+        TSIMD_INLINE vec<int32_t,8> operator<=(const vec<int32_t,8>& a) const {
             return (*this<a)|(*this==a);
         }
         __m256i data;
         enum{ size = 8 };
         enum{ bits = 256 };
-        friend std::ostream& operator<<(std::ostream& out, vec<int, 8> v){
+        friend std::ostream& operator<<(std::ostream& out, vec<int32_t, 8> v){
             out<<v[0]<<" "<<v[1]<<" "<<v[2]<<" "<<v[3];
             out<<" "<<v[4]<<" "<<v[5]<<" "<<v[6]<<" "<<v[7];
             return out;
@@ -120,4 +120,4 @@ namespace TSimd{
 }
 #endif
 
-#endif //TSIMD_VEC8I_H
+#endif //TSIMD_VEC8INT32_H
