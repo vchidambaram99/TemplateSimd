@@ -9,13 +9,13 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(uint8_t a){ data = _mm256_set1_epi8(a); }
-        TSIMD_INLINE vec(uint8_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
+        TSIMD_INLINE explicit vec(uint8_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
         TSIMD_INLINE vec(__m256i a){ data = a; }
         TSIMD_INLINE vec(uint8_t a0, uint8_t a1, uint8_t a2, uint8_t a3, uint8_t a4, uint8_t a5, uint8_t a6, uint8_t a7, uint8_t a8, uint8_t a9, uint8_t a10, uint8_t a11, uint8_t a12, uint8_t a13, uint8_t a14, uint8_t a15, uint8_t a16,
                          uint8_t a17, uint8_t a18, uint8_t a19, uint8_t a20, uint8_t a21, uint8_t a22, uint8_t a23, uint8_t a24, uint8_t a25, uint8_t a26, uint8_t a27, uint8_t a28, uint8_t a29, uint8_t a30, uint8_t a31){
             data = _mm256_set_epi8(a31,a30,a29,a28,a27,a26,a25,a24,a23,a22,a21,a20,a19,a18,a17,a16,a15,a14,a13,a12,a11,a10,a9,a8,a7,a6,a5,a4,a3,a2,a1,a0);
         }
-        TSIMD_INLINE void store(uint8_t* a){ _mm256_storeu_si256((__m256i*)a,data); }
+        TSIMD_INLINE void store(uint8_t* a) const { _mm256_storeu_si256((__m256i*)a,data); }
         TSIMD_INLINE uint8_t& operator[](int idx){ return ((uint8_t*)(&data))[idx]; }
         TSIMD_INLINE const uint8_t& operator[](int idx) const { return ((uint8_t*)(&data))[idx]; }
         TSIMD_INLINE vec<uint8_t,32>& operator+=(const vec<uint8_t,32>& rhs){
@@ -34,39 +34,39 @@ namespace TSimd{
             data = _mm256_or_si256(a,b);
             return *this;
         }
-        inline vec<uint8_t,32>& operator/=(const vec<uint8_t,32>& rhs){ //TODO find simd integer division algorithm
-            (*this)[0]/=rhs[0];
-            (*this)[1]/=rhs[1];
-            (*this)[2]/=rhs[2];
-            (*this)[3]/=rhs[3];
-            (*this)[4]/=rhs[4];
-            (*this)[5]/=rhs[5];
-            (*this)[6]/=rhs[6];
-            (*this)[7]/=rhs[7];
-            (*this)[8]/=rhs[8];
-            (*this)[9]/=rhs[9];
-            (*this)[10]/=rhs[10];
-            (*this)[11]/=rhs[11];
-            (*this)[12]/=rhs[12];
-            (*this)[13]/=rhs[13];
-            (*this)[14]/=rhs[14];
-            (*this)[15]/=rhs[15];
-            (*this)[16]/=rhs[16];
-            (*this)[17]/=rhs[17];
-            (*this)[18]/=rhs[18];
-            (*this)[19]/=rhs[19];
-            (*this)[20]/=rhs[20];
-            (*this)[21]/=rhs[21];
-            (*this)[22]/=rhs[22];
-            (*this)[23]/=rhs[23];
-            (*this)[24]/=rhs[24];
-            (*this)[25]/=rhs[25];
-            (*this)[26]/=rhs[26];
-            (*this)[27]/=rhs[27];
-            (*this)[28]/=rhs[28];
-            (*this)[29]/=rhs[29];
-            (*this)[30]/=rhs[30];
-            (*this)[31]/=rhs[31];
+        inline vec<uint8_t,32>& operator/=(const vec<uint8_t,32>& rhs){ //this seems like a lot, but its faster than scalar
+            __m256i zero = _mm256_setzero_si256();
+            __m256i loa = _mm256_unpacklo_epi8(data,zero);
+            __m256i lob = _mm256_unpacklo_epi8(rhs.data,zero);
+            __m256i lloa = _mm256_unpacklo_epi8(loa,zero);
+            __m256i llob = _mm256_unpacklo_epi8(lob,zero);
+            __m256i hloa = _mm256_unpackhi_epi8(loa,zero);
+            __m256i hlob = _mm256_unpackhi_epi8(lob,zero);
+            __m256 lloaf = _mm256_cvtepi32_ps(lloa);
+            __m256 llobf = _mm256_cvtepi32_ps(llob);
+            __m256 hloaf = _mm256_cvtepi32_ps(hloa);
+            __m256 hlobf = _mm256_cvtepi32_ps(hlob);
+            lloaf = _mm256_div_ps(lloaf,llobf);
+            hloaf = _mm256_div_ps(hloaf,hlobf);
+            lloa = _mm256_cvttps_epi32(lloaf);
+            hloa = _mm256_cvttps_epi32(hloaf);
+            loa = _mm256_packs_epi32(lloa,hloa);
+            __m256i hia = _mm256_unpackhi_epi8(data,zero);
+            __m256i hib = _mm256_unpackhi_epi8(rhs.data,zero);
+            __m256i lhia = _mm256_unpacklo_epi8(hia,zero);
+            __m256i lhib = _mm256_unpacklo_epi8(hib,zero);
+            __m256i hhia = _mm256_unpackhi_epi8(hia,zero);
+            __m256i hhib = _mm256_unpackhi_epi8(hib,zero);
+            __m256 lhiaf = _mm256_cvtepi32_ps(lhia);
+            __m256 lhibf = _mm256_cvtepi32_ps(lhib);
+            __m256 hhiaf = _mm256_cvtepi32_ps(hhia);
+            __m256 hhibf = _mm256_cvtepi32_ps(hhib);
+            lhiaf = _mm256_div_ps(lhiaf,lhibf);
+            hhiaf = _mm256_div_ps(hhiaf,hhibf);
+            lhia = _mm256_cvttps_epi32(lhiaf);
+            hhia = _mm256_cvttps_epi32(hhiaf);
+            hia = _mm256_packs_epi32(lhia,hhia);
+            data = _mm256_packus_epi16(loa,hia);
             return *this;
         }
         TSIMD_INLINE vec<uint8_t,32> operator+(const vec<uint8_t,32>& rhs) const {
@@ -82,7 +82,7 @@ namespace TSimd{
             b = _mm256_slli_epi16(b,8);
             return vec<uint8_t,32>(_mm256_or_si256(a,b));
         }
-        TSIMD_INLINE vec<uint8_t,32> operator/(const vec<uint8_t,32>& rhs) const { //TODO find simd integer division algorithm
+        TSIMD_INLINE vec<uint8_t,32> operator/(const vec<uint8_t,32>& rhs) const {
             vec<uint8_t,32> r(data);
             r/=rhs;
             return r;

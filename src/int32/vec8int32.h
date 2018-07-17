@@ -9,10 +9,10 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(int32_t a){ data = _mm256_set1_epi32(a); }
-        TSIMD_INLINE vec(int32_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
+        TSIMD_INLINE explicit vec(int32_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
         TSIMD_INLINE vec(__m256i a){ data = a; }
         TSIMD_INLINE vec(int32_t a, int32_t b, int32_t c, int32_t d, int32_t e, int32_t f, int32_t g, int32_t h){ data = _mm256_set_epi32(h,g,f,e,d,c,b,a); }
-        TSIMD_INLINE void store(int32_t* a){ _mm256_storeu_si256((__m256i*)a,data); }
+        TSIMD_INLINE void store(int32_t* a) const { _mm256_storeu_si256((__m256i*)a,data); }
         TSIMD_INLINE int32_t& operator[](std::size_t idx){ return ((int32_t*)(&data))[idx]; }
         TSIMD_INLINE const int32_t& operator[](std::size_t idx) const { return ((int32_t*)(&data))[idx]; }
         TSIMD_INLINE vec<int32_t,8>& operator+=(const vec<int32_t,8>& rhs){
@@ -27,15 +27,16 @@ namespace TSimd{
             data = _mm256_mullo_epi32(data,rhs.data);
             return *this;
         }
-        inline vec<int32_t,8>& operator/=(const vec<int32_t,8>& rhs){ //TODO find simd integer division algorithm
-            (*this)[0]/=rhs[0];
-            (*this)[1]/=rhs[1];
-            (*this)[2]/=rhs[2];
-            (*this)[3]/=rhs[3];
-            (*this)[4]/=rhs[4];
-            (*this)[5]/=rhs[5];
-            (*this)[6]/=rhs[6];
-            (*this)[7]/=rhs[7];
+        inline vec<int32_t,8>& operator/=(const vec<int32_t,8>& rhs){
+            __m256d loa = _mm256_cvtepi32_pd(_mm256_castsi256_si128(data));
+            __m256d lob = _mm256_cvtepi32_pd(_mm256_castsi256_si128(rhs.data));
+            __m256d hia = _mm256_cvtepi32_pd(_mm256_extractf128_si256(data,1));
+            __m256d hib = _mm256_cvtepi32_pd(_mm256_extractf128_si256(rhs.data,1));
+            loa = _mm256_div_pd(loa,lob);
+            hia = _mm256_div_pd(hia,hib);
+            __m128i lo = _mm256_cvttpd_epi32(loa);
+            __m128i hi = _mm256_cvttpd_epi32(hia);
+            data = _mm256_insertf128_si256(_mm256_castsi128_si256(lo),hi,1);
             return *this;
         }
         TSIMD_INLINE vec<int32_t,8> operator+(const vec<int32_t,8>& rhs) const {
@@ -47,7 +48,7 @@ namespace TSimd{
         TSIMD_INLINE vec<int32_t,8> operator*(const vec<int32_t,8>& rhs) const {
             return vec<int32_t,8>(_mm256_mullo_epi32(data,rhs.data));
         }
-        TSIMD_INLINE vec<int32_t,8> operator/(const vec<int32_t,8>& rhs) const { //TODO find simd integer division algorithm
+        TSIMD_INLINE vec<int32_t,8> operator/(const vec<int32_t,8>& rhs) const {
             vec<int32_t,8> r(data);
             r/=rhs;
             return r;

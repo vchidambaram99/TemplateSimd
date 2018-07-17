@@ -9,10 +9,10 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(uint32_t a){ data = _mm_set1_epi32(a); }
-        TSIMD_INLINE vec(uint32_t* a){ data = _mm_loadu_si128((__m128i*)a); }
+        TSIMD_INLINE explicit vec(uint32_t* a){ data = _mm_loadu_si128((__m128i*)a); }
         TSIMD_INLINE vec(__m128i a){ data = a; }
         TSIMD_INLINE vec(uint32_t a, uint32_t b, uint32_t c, uint32_t d){ data = _mm_set_epi32(d,c,b,a); }
-        TSIMD_INLINE void store(uint32_t* a){ _mm_storeu_si128((__m128i*)a,data); }
+        TSIMD_INLINE void store(uint32_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
         TSIMD_INLINE uint32_t& operator[](std::size_t idx){ return ((uint32_t*)(&data))[idx]; }
         TSIMD_INLINE const uint32_t& operator[](std::size_t idx) const { return ((uint32_t*)(&data))[idx]; }
         TSIMD_INLINE vec<uint32_t,4>& operator+=(const vec<uint32_t,4>& rhs){
@@ -36,11 +36,16 @@ namespace TSimd{
                 return *this;
             #endif
         }
-        inline vec<uint32_t,4>& operator/=(const vec<uint32_t,4>& rhs){ //TODO find simd unsigned integer division algorithm
-            (*this)[0]/=rhs[0];
-            (*this)[1]/=rhs[1];
-            (*this)[2]/=rhs[2];
-            (*this)[3]/=rhs[3];
+        inline vec<uint32_t,4>& operator/=(const vec<uint32_t,4>& rhs){
+            uint32_t a[4];
+            uint32_t b[4];
+            store(a);
+            rhs.store(b);
+            a[0]/=b[0];
+            a[1]/=b[1];
+            a[2]/=b[2];
+            a[3]/=b[3];
+            data = _mm_loadu_si128((__m128i*)a);
             return *this;
         }
         TSIMD_INLINE vec<uint32_t,4> operator+(const vec<uint32_t,4>& rhs) const {
@@ -60,7 +65,7 @@ namespace TSimd{
                 return vec<uint32_t,4>(_mm_unpacklo_epi32(a,b));
             #endif
         }
-        TSIMD_INLINE vec<uint32_t,4> operator/(const vec<uint32_t,4>& rhs) const { //TODO find simd unsigned integer division algorithm
+        TSIMD_INLINE vec<uint32_t,4> operator/(const vec<uint32_t,4>& rhs) const {
             vec<uint32_t,4> r(data);
             r/=rhs;
             return r;

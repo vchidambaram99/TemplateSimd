@@ -121,9 +121,17 @@ namespace TSimd{ //equivalent of ternary operator
 /*
 Note: On my computer, microbenchmarking shows that this method is pretty much as fast as a blend
 */
-    template<typename T>
-    TSIMD_INLINE T select(const T& cond, const T& a, const T& b){
+    template<typename T, int N>
+    TSIMD_INLINE vec<T,N> select(const vec<T,N>& cond, const vec<T,N>& a, const vec<T,N>& b){
         return (a&cond)|(b&~cond);
+    }
+    template<typename T, typename U, int N>
+    TSIMD_INLINE vec<T,N> select(const vec<T,N>& cond, const U& a, const vec<T,N>& b){
+        return (vec<T,N>(a)&cond)|(b&~cond);
+    }
+    template<typename T, typename U, int N>
+    TSIMD_INLINE vec<T,N> select(const vec<T,N>& cond, const vec<T,N>& a, const U& b){
+        return (a&cond)|(vec<T,N>(b)&~cond);
     }
     template<typename T>
     TSIMD_INLINE vec<T,1> select(const bool& cond, const vec<T,1>& a, const vec<T,1>& b){

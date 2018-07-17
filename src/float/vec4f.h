@@ -9,10 +9,10 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(float a){ data = _mm_set_ps1(a); }
-        TSIMD_INLINE vec(float* a){ data = _mm_loadu_ps(a); }
+        TSIMD_INLINE explicit vec(float* a){ data = _mm_loadu_ps(a); }
         TSIMD_INLINE vec(__m128 a){ data = a; }
         TSIMD_INLINE vec(float a, float b, float c, float d){ data = _mm_set_ps(d,c,b,a); }
-        TSIMD_INLINE void store(float* a){ _mm_storeu_ps(a,data); }
+        TSIMD_INLINE void store(float* a) const { _mm_storeu_ps(a,data); }
         TSIMD_INLINE float& operator[](std::size_t idx){ return ((float*)(&data))[idx]; }
         TSIMD_INLINE const float& operator[](std::size_t idx) const { return ((float*)(&data))[idx]; }
         TSIMD_INLINE vec<float,4>& operator+=(const vec<float,4>& rhs){

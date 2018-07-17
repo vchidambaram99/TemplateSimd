@@ -9,10 +9,10 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(int32_t a){ data = _mm_set1_epi32(a); }
-        TSIMD_INLINE vec(int32_t* a){ data = _mm_loadu_si128((__m128i*)a); }
+        TSIMD_INLINE explicit vec(int32_t* a){ data = _mm_loadu_si128((__m128i*)a); }
         TSIMD_INLINE vec(__m128i a){ data = a; }
         TSIMD_INLINE vec(int32_t a, int32_t b, int32_t c, int32_t d){ data = _mm_set_epi32(d,c,b,a); }
-        TSIMD_INLINE void store(int32_t* a){ _mm_storeu_si128((__m128i*)a,data); }
+        TSIMD_INLINE void store(int32_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
         TSIMD_INLINE int32_t& operator[](std::size_t idx){ return ((int32_t*)(&data))[idx]; }
         TSIMD_INLINE const int32_t& operator[](std::size_t idx) const { return ((int32_t*)(&data))[idx]; }
         TSIMD_INLINE vec<int32_t,4>& operator+=(const vec<int32_t,4>& rhs){
@@ -36,11 +36,16 @@ namespace TSimd{
                 return *this;
             #endif
         }
-        inline vec<int32_t,4>& operator/=(const vec<int32_t,4>& rhs){ //TODO find simd integer division algorithm
-            (*this)[0]/=rhs[0];
-            (*this)[1]/=rhs[1];
-            (*this)[2]/=rhs[2];
-            (*this)[3]/=rhs[3];
+        inline vec<int32_t,4>& operator/=(const vec<int32_t,4>& rhs){
+            __m128d loa = _mm_cvtepi32_pd(data);
+            __m128d lob = _mm_cvtepi32_pd(rhs.data);
+            __m128d hia = _mm_cvtepi32_pd(_mm_srli_si128(data,8));
+            __m128d hib = _mm_cvtepi32_pd(_mm_srli_si128(rhs.data,8));
+            loa = _mm_div_pd(loa,lob);
+            hia = _mm_div_pd(hia,hib);
+            __m128i lo = _mm_cvttpd_epi32(loa);
+            __m128i hi = _mm_cvttpd_epi32(hia);
+            data = _mm_or_si128(lo,_mm_slli_si128(hi,8));
             return *this;
         }
         TSIMD_INLINE vec<int32_t,4> operator+(const vec<int32_t,4>& rhs) const {
@@ -60,7 +65,7 @@ namespace TSimd{
                 return vec<int32_t,4>(_mm_unpacklo_epi32(a,b));
             #endif
         }
-        TSIMD_INLINE vec<int32_t,4> operator/(const vec<int32_t,4>& rhs) const { //TODO find simd integer division algorithm
+        TSIMD_INLINE vec<int32_t,4> operator/(const vec<int32_t,4>& rhs) const {
             vec<int32_t,4> r(data);
             r/=rhs;
             return r;

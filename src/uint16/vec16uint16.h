@@ -9,13 +9,13 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(uint16_t a){ data = _mm256_set1_epi16(a); }
-        TSIMD_INLINE vec(uint16_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
+        TSIMD_INLINE explicit vec(uint16_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
         TSIMD_INLINE vec(__m256i a){ data = a; }
         TSIMD_INLINE vec(uint16_t a, uint16_t b, uint16_t c, uint16_t d, uint16_t e, uint16_t f, uint16_t g, uint16_t h,
                          uint16_t i, uint16_t j, uint16_t k, uint16_t l, uint16_t m, uint16_t n, uint16_t o, uint16_t p){
             data = _mm256_set_epi16(p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a);
         }
-        TSIMD_INLINE void store(uint16_t* a){ _mm256_storeu_si256((__m256i*)a,data); }
+        TSIMD_INLINE void store(uint16_t* a) const { _mm256_storeu_si256((__m256i*)a,data); }
         TSIMD_INLINE uint16_t& operator[](std::size_t idx){ return ((uint16_t*)(&data))[idx]; }
         TSIMD_INLINE const uint16_t& operator[](std::size_t idx) const { return ((uint16_t*)(&data))[idx]; }
         TSIMD_INLINE vec<uint16_t,16>& operator+=(const vec<uint16_t,16>& rhs){
@@ -30,23 +30,21 @@ namespace TSimd{
             data = _mm256_mullo_epi16(data,rhs.data);
             return *this;
         }
-        inline vec<uint16_t,16>& operator/=(const vec<uint16_t,16>& rhs){ //TODO find simd integer division algorithm
-            (*this)[0]/=rhs[0];
-            (*this)[1]/=rhs[1];
-            (*this)[2]/=rhs[2];
-            (*this)[3]/=rhs[3];
-            (*this)[4]/=rhs[4];
-            (*this)[5]/=rhs[5];
-            (*this)[6]/=rhs[6];
-            (*this)[7]/=rhs[7];
-            (*this)[8]/=rhs[8];
-            (*this)[9]/=rhs[9];
-            (*this)[10]/=rhs[10];
-            (*this)[11]/=rhs[11];
-            (*this)[12]/=rhs[12];
-            (*this)[13]/=rhs[13];
-            (*this)[14]/=rhs[14];
-            (*this)[15]/=rhs[15];
+        inline vec<uint16_t,16>& operator/=(const vec<uint16_t,16>& rhs){
+            __m256i zero = _mm256_setzero_si256();
+            __m256i loa = _mm256_unpacklo_epi16(data,zero);
+            __m256i lob = _mm256_unpacklo_epi16(rhs.data,zero);
+            __m256i hia = _mm256_unpackhi_epi16(data,zero);
+            __m256i hib = _mm256_unpackhi_epi16(rhs.data,zero);
+            __m256 loaf = _mm256_cvtepi32_ps(loa);
+            __m256 lobf = _mm256_cvtepi32_ps(lob);
+            __m256 hiaf = _mm256_cvtepi32_ps(hia);
+            __m256 hibf = _mm256_cvtepi32_ps(hib);
+            loaf = _mm256_div_ps(loaf,lobf);
+            hiaf = _mm256_div_ps(hiaf,hibf);
+            loa = _mm256_cvttps_epi32(loaf);
+            hia = _mm256_cvttps_epi32(hiaf);
+            data = _mm256_packus_epi32(loa,hia);
             return *this;
         }
         TSIMD_INLINE vec<uint16_t,16> operator+(const vec<uint16_t,16>& rhs) const {
@@ -58,7 +56,7 @@ namespace TSimd{
         TSIMD_INLINE vec<uint16_t,16> operator*(const vec<uint16_t,16>& rhs) const {
             return vec<uint16_t,16>(_mm256_mullo_epi16(data,rhs.data));
         }
-        TSIMD_INLINE vec<uint16_t,16> operator/(const vec<uint16_t,16>& rhs) const { //TODO find simd integer division algorithm
+        TSIMD_INLINE vec<uint16_t,16> operator/(const vec<uint16_t,16>& rhs) const {
             vec<uint16_t,16> r(data);
             r/=rhs;
             return r;

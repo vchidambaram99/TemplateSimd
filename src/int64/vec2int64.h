@@ -9,10 +9,10 @@ namespace TSimd{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(int64_t a){ data = _mm_set1_epi64x(a); }
-        TSIMD_INLINE vec(int64_t* a){ data = _mm_loadu_si128((__m128i*)a); }
+        TSIMD_INLINE explicit vec(int64_t* a){ data = _mm_loadu_si128((__m128i*)a); }
         TSIMD_INLINE vec(__m128i a){ data = a; }
         TSIMD_INLINE vec(int64_t a, int64_t b){ data = _mm_set_epi64x(b,a); }
-        TSIMD_INLINE void store(int64_t* a){ _mm_storeu_si128((__m128i*)a,data); }
+        TSIMD_INLINE void store(int64_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
         TSIMD_INLINE int64_t& operator[](std::size_t idx){ return ((int64_t*)(&data))[idx]; }
         TSIMD_INLINE const int64_t& operator[](std::size_t idx) const { return ((int64_t*)(&data))[idx]; }
         TSIMD_INLINE vec<int64_t,2>& operator+=(const vec<int64_t,2>& rhs){
@@ -32,9 +32,14 @@ namespace TSimd{
             data = _mm_add_epi64(a,_mm_add_epi64(b,c));
             return *this;
         }
-        inline vec<int64_t,2>& operator/=(const vec<int64_t,2>& rhs){ //TODO find simd integer division algorithm
-            (*this)[0]/=rhs[0];
-            (*this)[1]/=rhs[1];
+        inline vec<int64_t,2>& operator/=(const vec<int64_t,2>& rhs){
+            int64_t a[2];
+            int64_t b[2];
+            store(a);
+            rhs.store(b);
+            a[0]/=b[0];
+            a[1]/=b[1];
+            data = _mm_loadu_si128((__m128i*)a);
             return *this;
         }
         TSIMD_INLINE vec<int64_t,2> operator+(const vec<int64_t,2>& rhs) const {
@@ -51,7 +56,7 @@ namespace TSimd{
             c = _mm_slli_epi64(c,32);
             return vec<int64_t,2>(_mm_add_epi64(a,_mm_add_epi64(b,c)));
         }
-        TSIMD_INLINE vec<int64_t,2> operator/(const vec<int64_t,2>& rhs) const { //TODO find simd integer division algorithm
+        TSIMD_INLINE vec<int64_t,2> operator/(const vec<int64_t,2>& rhs) const {
             vec<int64_t,2> r(data);
             r/=rhs;
             return r;
