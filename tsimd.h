@@ -28,6 +28,18 @@ namespace TSimd{
     template<typename T, int N> class vec{};
 
     namespace intl{
+        template<typename T, int N> class ConstProxy{
+        public:
+            TSIMD_INLINE ConstProxy(const vec<T,N>& v, const std::size_t index) : ref(v), idx(index) {}
+            TSIMD_INLINE operator T() const {
+                T arr[N];
+                ref.store(arr);
+                return arr[idx];
+            }
+        private:
+            const vec<T,N>& ref;
+            const std::size_t idx;
+        };
         template<typename T, int N> class AssignmentProxy{
         public:
             TSIMD_INLINE AssignmentProxy(vec<T,N>& v, const std::size_t index) : ref(v), idx(index) {}
@@ -141,6 +153,7 @@ namespace TSimd{
         TSIMD_INLINE vec(T a){ data = a; }
         TSIMD_INLINE vec(T* a){ data = *a; }
         TSIMD_INLINE void store(T* a){ *a = data; }
+        TSIMD_INLINE intl::ConstProxy<T,1> operator[](const std::size_t idx) const { return intl::ConstProxy<T,1>(*this,idx); }
         TSIMD_INLINE intl::AssignmentProxy<T,1> operator[](const std::size_t idx){ return intl::AssignmentProxy<T,1>(*this,idx); }
         TSIMD_INLINE vec<T,1>& operator+=(const vec<T,1> rhs){
             data += rhs.data;

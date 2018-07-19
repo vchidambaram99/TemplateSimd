@@ -13,6 +13,7 @@ namespace TSimd{
         TSIMD_INLINE vec(__m256i a){ data = a; }
         TSIMD_INLINE vec(uint64_t a, uint64_t b, uint64_t c, uint64_t d){ data = _mm256_set_epi64x(d,c,b,a); }
         TSIMD_INLINE void store(uint64_t* a) const { _mm256_storeu_si256((__m256i*)a,data); }
+        TSIMD_INLINE intl::ConstProxy<uint64_t,4> operator[](const std::size_t idx) const { return intl::ConstProxy<uint64_t,4>(*this,idx); }
         TSIMD_INLINE intl::AssignmentProxy<uint64_t,4> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint64_t,4>(*this,idx); }
         TSIMD_INLINE vec<uint64_t,4>& operator+=(const vec<uint64_t,4> rhs){
             data = _mm256_add_epi64(data,rhs.data);
@@ -106,10 +107,10 @@ namespace TSimd{
         TSIMD_INLINE vec<uint64_t,4> operator!=(const vec<uint64_t,4> a) const {
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<uint64_t,4> operator>(vec<uint64_t,4> a){
+        TSIMD_INLINE vec<uint64_t,4> operator>(const vec<uint64_t,4> a) const {
             return ~(*this<=a);
         }
-        TSIMD_INLINE vec<uint64_t,4> operator>=(vec<uint64_t,4> a){
+        TSIMD_INLINE vec<uint64_t,4> operator>=(const vec<uint64_t,4> a) const {
             vec<uint64_t,4> b;
             b[0] = (*this)[0] >= a[0];
             b[1] = (*this)[1] >= a[1];
@@ -117,10 +118,10 @@ namespace TSimd{
             b[3] = (*this)[3] >= a[3];
             return ~b+1;
         }
-        TSIMD_INLINE vec<uint64_t,4> operator<(vec<uint64_t,4> a){
+        TSIMD_INLINE vec<uint64_t,4> operator<(const vec<uint64_t,4> a) const {
             return a>*this;
         }
-        TSIMD_INLINE vec<uint64_t,4> operator<=(vec<uint64_t,4> a){
+        TSIMD_INLINE vec<uint64_t,4> operator<=(const vec<uint64_t,4> a) const {
             return a>=*this;
         }
         __m256i data;
