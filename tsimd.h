@@ -36,63 +36,63 @@ namespace TSimd{
                 ref.store(arr);
                 return arr[idx];
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] = a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator+=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator+=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] += a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator-=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator-=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] -= a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator*=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator*=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] *= a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator/=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator/=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] /= a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator%=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator%=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] %= a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator&=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator&=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] &= a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator|=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator|=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] |= a;
                 ref = vec<T,N>(arr);
                 return *this;
             }
-            TSIMD_INLINE AssignmentProxy<T,N>& operator^=(const T& a){
+            TSIMD_INLINE AssignmentProxy<T,N>& operator^=(const T a){
                 T arr[N];
                 ref.store(arr);
                 arr[idx] ^= a;
@@ -142,53 +142,53 @@ namespace TSimd{
         TSIMD_INLINE vec(T* a){ data = *a; }
         TSIMD_INLINE void store(T* a){ *a = data; }
         TSIMD_INLINE intl::AssignmentProxy<T,1> operator[](const std::size_t idx){ return intl::AssignmentProxy<T,1>(*this,idx); }
-        TSIMD_INLINE vec<T,1>& operator+=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator+=(const vec<T,1> rhs){
             data += rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1>& operator-=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator-=(const vec<T,1> rhs){
             data -= rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1>& operator*=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator*=(const vec<T,1> rhs){
             data *= rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1>& operator/=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator/=(const vec<T,1> rhs){
             data /= rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1> operator+(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator+(const vec<T,1> rhs) const {
             return vec<T,1>(data+rhs.data);
         }
-        TSIMD_INLINE vec<T,1> operator-(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator-(const vec<T,1> rhs) const {
             return vec<T,1>(data-rhs.data);
         }
-        TSIMD_INLINE vec<T,1> operator*(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator*(const vec<T,1> rhs) const {
             return vec<T,1>(data*rhs.data);
         }
-        TSIMD_INLINE vec<T,1> operator/(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator/(const vec<T,1> rhs) const {
             return vec<T,1>(data/rhs.data);
         }
-        TSIMD_INLINE vec<T,1>& operator&=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator&=(const vec<T,1> rhs){
             data &= rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1>& operator|=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator|=(const vec<T,1> rhs){
             data |= rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1>& operator^=(const vec<T,1>& rhs){
+        TSIMD_INLINE vec<T,1>& operator^=(const vec<T,1> rhs){
             data ^= rhs.data;
             return *this;
         }
-        TSIMD_INLINE vec<T,1> operator&(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator&(const vec<T,1> rhs) const {
             return vec<T,1>(data&rhs.data);
         }
-        TSIMD_INLINE vec<T,1> operator|(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator|(const vec<T,1> rhs) const {
             return vec<T,1>(data|rhs.data);
         }
-        TSIMD_INLINE vec<T,1> operator^(const vec<T,1>& rhs) const {
+        TSIMD_INLINE vec<T,1> operator^(const vec<T,1> rhs) const {
             return vec<T,1>(data^rhs.data);
         }
         TSIMD_INLINE vec<T,1> operator~() const {
@@ -198,22 +198,22 @@ namespace TSimd{
         TSIMD_INLINE operator vec<V,1>(){ //cast to other vec types of the same size
             return vec<V,1>((V)data);
         }
-        TSIMD_INLINE bool operator==(const vec<T,1>& a) const {
+        TSIMD_INLINE bool operator==(const vec<T,1> a) const {
             return data==a;
         }
-        TSIMD_INLINE bool operator!=(const vec<T,1>& a) const {
+        TSIMD_INLINE bool operator!=(const vec<T,1> a) const {
             return data!=a;
         }
-        TSIMD_INLINE bool operator>(const vec<T,1>& a) const {
+        TSIMD_INLINE bool operator>(const vec<T,1> a) const {
             return data>a;
         }
-        TSIMD_INLINE bool operator>=(const vec<T,1>& a) const {
+        TSIMD_INLINE bool operator>=(const vec<T,1> a) const {
             return data>=a;
         }
-        TSIMD_INLINE bool operator<(const vec<T,1>& a) const {
+        TSIMD_INLINE bool operator<(const vec<T,1> a) const {
             return data>a;
         }
-        TSIMD_INLINE bool operator<=(const vec<T,1>& a) const {
+        TSIMD_INLINE bool operator<=(const vec<T,1> a) const {
             return data>=a;
         }
         T data;
@@ -231,19 +231,19 @@ namespace TSimd{ //equivalent of ternary operator
 Note: On my computer, microbenchmarking shows that this method is pretty much as fast as a blend
 */
     template<typename T, int N>
-    TSIMD_INLINE vec<T,N> select(const vec<T,N>& cond, const vec<T,N>& a, const vec<T,N>& b){
+    TSIMD_INLINE vec<T,N> select(const vec<T,N> cond, const vec<T,N> a, const vec<T,N> b){
         return (a&cond)|(b&~cond);
     }
     template<typename T, typename U, int N>
-    TSIMD_INLINE vec<T,N> select(const vec<T,N>& cond, const U& a, const vec<T,N>& b){
+    TSIMD_INLINE vec<T,N> select(const vec<T,N> cond, const U a, const vec<T,N> b){
         return (vec<T,N>(a)&cond)|(b&~cond);
     }
     template<typename T, typename U, int N>
-    TSIMD_INLINE vec<T,N> select(const vec<T,N>& cond, const vec<T,N>& a, const U& b){
+    TSIMD_INLINE vec<T,N> select(const vec<T,N> cond, const vec<T,N> a, const U b){
         return (a&cond)|(vec<T,N>(b)&~cond);
     }
     template<typename T>
-    TSIMD_INLINE vec<T,1> select(const bool& cond, const vec<T,1>& a, const vec<T,1>& b){
+    TSIMD_INLINE vec<T,1> select(const bool cond, const vec<T,1> a, const vec<T,1> b){
         return (cond)?a:b;
     }
 }

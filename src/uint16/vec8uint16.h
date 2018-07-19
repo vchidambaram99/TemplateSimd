@@ -16,19 +16,19 @@ namespace TSimd{
         }
         TSIMD_INLINE void store(uint16_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
         TSIMD_INLINE intl::AssignmentProxy<uint16_t,8> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint16_t,8>(*this,idx); }
-        TSIMD_INLINE vec<uint16_t,8>& operator+=(const vec<uint16_t,8>& rhs){
+        TSIMD_INLINE vec<uint16_t,8>& operator+=(const vec<uint16_t,8> rhs){
             data = _mm_add_epi16(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator-=(const vec<uint16_t,8>& rhs){
+        TSIMD_INLINE vec<uint16_t,8>& operator-=(const vec<uint16_t,8> rhs){
             data = _mm_sub_epi16(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator*=(const vec<uint16_t,8>& rhs){
+        TSIMD_INLINE vec<uint16_t,8>& operator*=(const vec<uint16_t,8> rhs){
             data = _mm_mullo_epi16(data,rhs.data);
             return *this;
         }
-        inline vec<uint16_t,8>& operator/=(const vec<uint16_t,8>& rhs){
+        inline vec<uint16_t,8>& operator/=(const vec<uint16_t,8> rhs){
             __m128i zero = _mm_setzero_si128();
             __m128i loa = _mm_unpacklo_epi16(data,zero);
             __m128i lob = _mm_unpacklo_epi16(rhs.data,zero);
@@ -53,68 +53,68 @@ namespace TSimd{
             #endif
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8> operator+(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator+(const vec<uint16_t,8> rhs) const {
             return vec<uint16_t,8>(_mm_add_epi16(data,rhs.data));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator-(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator-(const vec<uint16_t,8> rhs) const {
             return vec<uint16_t,8>(_mm_sub_epi16(data,rhs.data));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator*(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator*(const vec<uint16_t,8> rhs) const {
             return vec<uint16_t,8>(_mm_mullo_epi16(data,rhs.data));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator/(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator/(const vec<uint16_t,8> rhs) const {
             vec<uint16_t,8> r(data);
             r/=rhs;
             return r;
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator&=(const vec<uint16_t,8>& rhs){
+        TSIMD_INLINE vec<uint16_t,8>& operator&=(const vec<uint16_t,8> rhs){
             data = _mm_and_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator|=(const vec<uint16_t,8>& rhs){
+        TSIMD_INLINE vec<uint16_t,8>& operator|=(const vec<uint16_t,8> rhs){
             data = _mm_or_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator^=(const vec<uint16_t,8>& rhs){
+        TSIMD_INLINE vec<uint16_t,8>& operator^=(const vec<uint16_t,8> rhs){
             data = _mm_xor_si128(data,rhs.data);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8> operator&(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator&(const vec<uint16_t,8> rhs) const {
             return vec<uint16_t,8>(_mm_and_si128(data,rhs.data));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator|(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator|(const vec<uint16_t,8> rhs) const {
             return vec<uint16_t,8>(_mm_or_si128(data,rhs.data));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator^(const vec<uint16_t,8>& rhs) const {
+        TSIMD_INLINE vec<uint16_t,8> operator^(const vec<uint16_t,8> rhs) const {
             return vec<uint16_t,8>(_mm_xor_si128(data,rhs.data));
         }
         TSIMD_INLINE vec<uint16_t,8> operator~() const {
             return vec<uint16_t,8>(_mm_xor_si128(data,_mm_set1_epi32(-1)));
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator<<=(const int& shift){
+        TSIMD_INLINE vec<uint16_t,8>& operator<<=(const int shift){
             data = _mm_slli_epi16(data,shift);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8>& operator>>=(const int& shift){
+        TSIMD_INLINE vec<uint16_t,8>& operator>>=(const int shift){
             data = _mm_srli_epi16(data,shift);
             return *this;
         }
-        TSIMD_INLINE vec<uint16_t,8> operator<<(const int& shift) const {
+        TSIMD_INLINE vec<uint16_t,8> operator<<(const int shift) const {
             return vec<uint16_t,8>(_mm_slli_epi16(data,shift));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator>>(const int& shift) const {
+        TSIMD_INLINE vec<uint16_t,8> operator>>(const int shift) const {
             return vec<uint16_t,8>(_mm_srli_epi16(data,shift));
         }
-        TSIMD_INLINE vec<uint16_t,8> operator==(const vec<uint16_t,8>& a) const {
+        TSIMD_INLINE vec<uint16_t,8> operator==(const vec<uint16_t,8> a) const {
             return _mm_cmpeq_epi16(data,a.data);
         }
-        TSIMD_INLINE vec<uint16_t,8> operator!=(const vec<uint16_t,8>& a) const {
+        TSIMD_INLINE vec<uint16_t,8> operator!=(const vec<uint16_t,8> a) const {
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<uint16_t,8> operator>(const vec<uint16_t,8>& a) const {
+        TSIMD_INLINE vec<uint16_t,8> operator>(const vec<uint16_t,8> a) const {
             return ~(*this<=a);
         }
-        TSIMD_INLINE vec<uint16_t,8> operator>=(const vec<uint16_t,8>& a) const {
+        TSIMD_INLINE vec<uint16_t,8> operator>=(const vec<uint16_t,8> a) const {
             #ifdef __SSE4_1__
                 return (*this)==_mm_max_epu16(data,a.data);
             #else
@@ -125,10 +125,10 @@ namespace TSimd{
                 return _mm_or_si128(sgte,_mm_cmpeq_epi16(data,a.data));
             #endif
         }
-        TSIMD_INLINE vec<uint16_t,8> operator<(const vec<uint16_t,8>& a) const {
+        TSIMD_INLINE vec<uint16_t,8> operator<(const vec<uint16_t,8> a) const {
             return a>*this;
         }
-        TSIMD_INLINE vec<uint16_t,8> operator<=(const vec<uint16_t,8>& a) const {
+        TSIMD_INLINE vec<uint16_t,8> operator<=(const vec<uint16_t,8> a) const {
             #ifdef __SSE4_1__
                 return (*this)==_mm_min_epu16(data,a.data);
             #else
