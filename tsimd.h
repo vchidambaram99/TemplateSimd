@@ -5,6 +5,7 @@
 #include <ostream>
 #include <cstdint>
 #include <climits>
+#include <type_traits>
 
 //if this fails, then you probably need a newer compiler
 #if _MSC_VER >= 1400 || __ICC || __ICL
@@ -25,14 +26,122 @@
 
 namespace TSimd{
     template<typename T, int N> class vec{};
+
+    namespace intl{
+        template<typename T, int N> class AssignmentProxy{
+        public:
+            TSIMD_INLINE AssignmentProxy(vec<T,N>& v, const std::size_t index) : ref(v), idx(index) {}
+            TSIMD_INLINE operator T() const {
+                T arr[N];
+                ref.store(arr);
+                return arr[idx];
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] = a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator+=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] += a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator-=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] -= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator*=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] *= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator/=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] /= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator%=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] %= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator&=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] &= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator|=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] |= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator^=(const T& a){
+                T arr[N];
+                ref.store(arr);
+                arr[idx] ^= a;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator--(){
+                T arr[N];
+                ref.store(arr);
+                arr[idx]--;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE AssignmentProxy<T,N>& operator++(){
+                T arr[N];
+                ref.store(arr);
+                arr[idx]++;
+                ref = vec<T,N>(arr);
+                return *this;
+            }
+            TSIMD_INLINE T operator--(int){
+                T arr[N];
+                ref.store(arr);
+                T ret = arr[idx];
+                arr[idx]--;
+                ref = vec<T,N>(arr);
+                return ret;
+            }
+            TSIMD_INLINE T operator++(int){
+                T arr[N];
+                ref.store(arr);
+                T ret = arr[idx];
+                arr[idx]++;
+                ref = vec<T,N>(arr);
+                return ret;
+            }
+        private:
+            vec<T,N>& ref;
+            const std::size_t idx;
+        };
+    }
+
     template<typename T> class vec<T,1>{
     public:
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(T a){ data = a; }
         TSIMD_INLINE vec(T* a){ data = *a; }
         TSIMD_INLINE void store(T* a){ *a = data; }
-        TSIMD_INLINE T& operator[](int idx){ return data; } //for api consistency
-        TSIMD_INLINE const T& operator[](int idx) const { return data; } //for api consistency
+        TSIMD_INLINE intl::AssignmentProxy<T,1> operator[](const std::size_t idx){ return intl::AssignmentProxy<T,1>(*this,idx); }
         TSIMD_INLINE vec<T,1>& operator+=(const vec<T,1>& rhs){
             data += rhs.data;
             return *this;

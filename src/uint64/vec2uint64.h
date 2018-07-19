@@ -13,8 +13,7 @@ namespace TSimd{
         TSIMD_INLINE vec(__m128i a){ data = a; }
         TSIMD_INLINE vec(uint64_t a, uint64_t b){ data = _mm_set_epi64x(b,a); }
         TSIMD_INLINE void store(uint64_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
-        TSIMD_INLINE uint64_t& operator[](std::size_t idx){ return ((uint64_t*)(&data))[idx]; }
-        TSIMD_INLINE const uint64_t& operator[](std::size_t idx) const { return ((uint64_t*)(&data))[idx]; }
+        TSIMD_INLINE intl::AssignmentProxy<uint64_t,2> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint64_t,2>(*this,idx); }
         TSIMD_INLINE vec<uint64_t,2>& operator+=(const vec<uint64_t,2>& rhs){
             data = _mm_add_epi64(data,rhs.data);
             return *this;
@@ -107,22 +106,22 @@ namespace TSimd{
                 return _mm_and_si128(b,_mm_shuffle_epi32(b,_MM_SHUFFLE(2,3,0,1)));
             #endif
         }
-        TSIMD_INLINE vec<uint64_t,2> operator!=(const vec<uint64_t,2>& a) const {
+        TSIMD_INLINE vec<uint64_t,2> operator!=(vec<uint64_t,2>& a){
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<uint64_t,2> operator>(const vec<uint64_t,2>& a) const {
+        TSIMD_INLINE vec<uint64_t,2> operator>(vec<uint64_t,2>& a){
             return ~(*this<=a);
         }
-        TSIMD_INLINE vec<uint64_t,2> operator>=(const vec<uint64_t,2>& a) const {
+        TSIMD_INLINE vec<uint64_t,2> operator>=(vec<uint64_t,2>& a){
             vec<uint64_t,2> b;
             b[0] = (*this)[0]>=a[0];
             b[1] = (*this)[1]>=a[1];
             return ~b+1;
         }
-        TSIMD_INLINE vec<uint64_t,2> operator<(const vec<uint64_t,2>& a) const {
+        TSIMD_INLINE vec<uint64_t,2> operator<(vec<uint64_t,2>& a){
             return a>*this;
         }
-        TSIMD_INLINE vec<uint64_t,2> operator<=(const vec<uint64_t,2>& a) const {
+        TSIMD_INLINE vec<uint64_t,2> operator<=(vec<uint64_t,2>& a){
             return a>=*this;
         }
         __m128i data;

@@ -15,8 +15,7 @@ namespace TSimd{
             data = _mm_set_epi8(p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a);
         }
         TSIMD_INLINE void store(uint8_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
-        TSIMD_INLINE uint8_t& operator[](std::size_t idx){ return ((uint8_t*)(&data))[idx]; }
-        TSIMD_INLINE const uint8_t& operator[](std::size_t idx) const { return ((uint8_t*)(&data))[idx]; }
+        TSIMD_INLINE intl::AssignmentProxy<uint8_t,16> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint8_t,16>(*this,idx); }
         TSIMD_INLINE vec<uint8_t,16>& operator+=(const vec<uint8_t,16>& rhs){
             data = _mm_add_epi8(data,rhs.data);
             return *this;

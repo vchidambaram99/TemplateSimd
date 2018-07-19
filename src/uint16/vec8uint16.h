@@ -15,8 +15,7 @@ namespace TSimd{
             data = _mm_set_epi16(h,g,f,e,d,c,b,a);
         }
         TSIMD_INLINE void store(uint16_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
-        TSIMD_INLINE uint16_t& operator[](std::size_t idx){ return ((uint16_t*)(&data))[idx]; }
-        TSIMD_INLINE const uint16_t& operator[](std::size_t idx) const { return ((uint16_t*)(&data))[idx]; }
+        TSIMD_INLINE intl::AssignmentProxy<uint16_t,8> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint16_t,8>(*this,idx); }
         TSIMD_INLINE vec<uint16_t,8>& operator+=(const vec<uint16_t,8>& rhs){
             data = _mm_add_epi16(data,rhs.data);
             return *this;
@@ -118,17 +117,12 @@ namespace TSimd{
         TSIMD_INLINE vec<uint16_t,8> operator>=(const vec<uint16_t,8>& a) const {
             #ifdef __SSE4_1__
                 return (*this)==_mm_max_epu16(data,a.data);
-            #else //TODO think of something better
-                vec<uint16_t,8> b;
-                b[0] = (*this)[0]>=a[0];
-                b[1] = (*this)[1]>=a[1];
-                b[2] = (*this)[2]>=a[2];
-                b[3] = (*this)[3]>=a[3];
-                b[4] = (*this)[4]>=a[4];
-                b[5] = (*this)[5]>=a[5];
-                b[6] = (*this)[6]>=a[6];
-                b[7] = (*this)[7]>=a[7];
-                return ~b+1;
+            #else
+                __m128i sgte = _mm_cmpgt_epi16(data,a.data);
+                __m128i lz = _mm_srai_epi16(data,15);
+                __m128i lza = _mm_srai_epi16(a.data,15);
+                sgte = _mm_xor_si128(sgte,_mm_xor_si128(lz,lza));
+                return _mm_or_si128(sgte,_mm_cmpeq_epi16(data,a.data));
             #endif
         }
         TSIMD_INLINE vec<uint16_t,8> operator<(const vec<uint16_t,8>& a) const {

@@ -13,8 +13,7 @@ namespace TSimd{
         TSIMD_INLINE vec(__m128i a){ data = a; }
         TSIMD_INLINE vec(uint32_t a, uint32_t b, uint32_t c, uint32_t d){ data = _mm_set_epi32(d,c,b,a); }
         TSIMD_INLINE void store(uint32_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
-        TSIMD_INLINE uint32_t& operator[](std::size_t idx){ return ((uint32_t*)(&data))[idx]; }
-        TSIMD_INLINE const uint32_t& operator[](std::size_t idx) const { return ((uint32_t*)(&data))[idx]; }
+        TSIMD_INLINE intl::AssignmentProxy<uint32_t,4> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint32_t,4>(*this,idx); }
         TSIMD_INLINE vec<uint32_t,4>& operator+=(const vec<uint32_t,4>& rhs){
             data = _mm_add_epi32(data,rhs.data);
             return *this;
@@ -120,13 +119,12 @@ namespace TSimd{
         TSIMD_INLINE vec<uint32_t,4> operator>=(const vec<uint32_t,4>& a) const {
             #ifdef __SSE4_1__
                 return (*this)==_mm_max_epu32(data,a.data);
-            #else //TODO think of something better
-                vec<uint32_t,4> b;
-                b[0] = (*this)[0]>=a[0];
-                b[1] = (*this)[1]>=a[1];
-                b[2] = (*this)[2]>=a[2];
-                b[3] = (*this)[3]>=a[3];
-                return ~b+1;
+            #else
+                __m128i sgte = _mm_cmpgt_epi32(data,a.data);
+                __m128i lz  = _mm_srai_epi32(data,31);
+                __m128i lza  = _mm_srai_epi32(a.data,31);
+                sgte = _mm_xor_si128(sgte,_mm_xor_si128(lz,lza));
+                return _mm_or_si128(sgte,_mm_cmpeq_epi32(data,a.data));
             #endif
         }
         TSIMD_INLINE vec<uint32_t,4> operator<(const vec<uint32_t,4>& a) const {
