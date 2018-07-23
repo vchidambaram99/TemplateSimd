@@ -17,6 +17,7 @@ namespace TSimd{
         TSIMD_INLINE void store(int8_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
         TSIMD_INLINE intl::ConstProxy<int8_t,16> operator[](const std::size_t idx) const { return intl::ConstProxy<int8_t,16>(*this,idx); }
         TSIMD_INLINE intl::AssignmentProxy<int8_t,16> operator[](const std::size_t idx){ return intl::AssignmentProxy<int8_t,16>(*this,idx); }
+        TSIMD_INLINE static vec<int8_t,16> zero(){ return _mm_setzero_si128(); }
         TSIMD_INLINE vec<int8_t,16>& operator+=(const vec<int8_t,16> rhs){
             data = _mm_add_epi8(data,rhs.data);
             return *this;
@@ -79,6 +80,9 @@ namespace TSimd{
             r/=rhs;
             return r;
         }
+        TSIMD_INLINE vec<int8_t,16> operator-() const {
+            return zero()-*this;
+        }
         TSIMD_INLINE vec<int8_t,16>& operator&=(const vec<int8_t,16> rhs){
             data = _mm_and_si128(data,rhs.data);
             return *this;
@@ -140,6 +144,29 @@ namespace TSimd{
         }
         TSIMD_INLINE vec<int8_t,16> operator<=(const vec<int8_t,16> a) const {
             return (*this<a)|(*this==a);
+        }
+        TSIMD_INLINE vec<int8_t,16> operator!() const {
+            return (*this)==0;
+        }
+        TSIMD_INLINE bool any() const {
+            return _mm_movemask_epi8((*this!=0).data);
+        }
+        TSIMD_INLINE bool all() const {
+            return !_mm_movemask_epi8((*this==0).data);
+        }
+        TSIMD_INLINE vec<int8_t,16> max(const vec<int8_t,16> rhs) const {
+            #ifdef __SSE4_1__
+                return _mm_max_epi8(data,rhs.data);
+            #else
+                return select(*this>rhs,*this,rhs);
+            #endif
+        }
+        TSIMD_INLINE vec<int8_t,16> min(const vec<int8_t,16> rhs) const {
+            #ifdef __SSE4_1__
+                return _mm_min_epi8(data,rhs.data);
+            #else
+                return select(*this<rhs,*this,rhs);
+            #endif
         }
         __m128i data;
         enum{ size = 16 };

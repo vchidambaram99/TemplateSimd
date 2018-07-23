@@ -15,6 +15,7 @@ namespace TSimd{
         TSIMD_INLINE void store(float* a) const { _mm_storeu_ps(a,data); }
         TSIMD_INLINE intl::ConstProxy<float,4> operator[](const std::size_t idx) const { return intl::ConstProxy<float,4>(*this,idx); }
         TSIMD_INLINE intl::AssignmentProxy<float,4> operator[](const std::size_t idx){ return intl::AssignmentProxy<float,4>(*this,idx); }
+        static TSIMD_INLINE vec<float,4> zero(){ return _mm_setzero_ps(); }
         TSIMD_INLINE vec<float,4>& operator+=(const vec<float,4> rhs){
             data = _mm_add_ps(data,rhs.data);
             return *this;
@@ -42,6 +43,9 @@ namespace TSimd{
         }
         TSIMD_INLINE vec<float,4> operator/(const vec<float,4> rhs) const {
             return vec<float,4>(_mm_div_ps(data,rhs.data));
+        }
+        TSIMD_INLINE vec<float,4> operator-() const {
+            return zero()-*this;
         }
         TSIMD_INLINE vec<float,4>& operator&=(const vec<float,4> rhs){
             data = _mm_and_ps(data,rhs.data);
@@ -84,6 +88,21 @@ namespace TSimd{
         }
         TSIMD_INLINE vec<float,4> operator<=(const vec<float,4> a) const {
             return _mm_cmple_ps(data,a.data);
+        }
+        TSIMD_INLINE vec<float,4> operator!() const {
+            return (*this)==0;
+        }
+        TSIMD_INLINE bool any() const {
+            return _mm_movemask_ps((*this!=0).data);
+        }
+        TSIMD_INLINE bool all() const {
+            return !_mm_movemask_ps((*this==0).data);
+        }
+        TSIMD_INLINE vec<float,4> max(const vec<float,4> rhs) const {
+            return _mm_max_ps(data,rhs.data);
+        }
+        TSIMD_INLINE vec<float,4> min(const vec<float,4> rhs) const {
+            return _mm_min_ps(data,rhs.data);
         }
         __m128 data;
         enum{ size = 4 };

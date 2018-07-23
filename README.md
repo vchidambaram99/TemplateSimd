@@ -1,5 +1,7 @@
 # TemplateSimd
-Templated wrapper classes for SSE and AVX simd intrinsics (in progress)
+Templated wrapper classes for SSE and AVX simd intrinsics
+
+This project is mainly intended for learning purposes, and if you want something similar but probably better, I would suggest [xsimd](https://github.com/QuantStack/xsimd) or [vc](https://github.com/VcDevel/Vc).
 
 Simd intrinsics are annoying to use when you are doing things with templates, so this attempts to wrap them and make that easier. If you want to use it, you can just include "tsimd.h". It supports a decent amount of the simd intrinsics and provides implementations for some things that aren't part of the intrinsics. Certain operations are implemented using scalars because I couldn't figure out how to do them efficiently with simd. I don't have access to AVX512 or a non-intel processor, so I probably won't be implementing wrappers for AVX512 or other SIMD instruction sets any time soon.
 

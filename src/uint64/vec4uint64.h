@@ -15,6 +15,7 @@ namespace TSimd{
         TSIMD_INLINE void store(uint64_t* a) const { _mm256_storeu_si256((__m256i*)a,data); }
         TSIMD_INLINE intl::ConstProxy<uint64_t,4> operator[](const std::size_t idx) const { return intl::ConstProxy<uint64_t,4>(*this,idx); }
         TSIMD_INLINE intl::AssignmentProxy<uint64_t,4> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint64_t,4>(*this,idx); }
+        TSIMD_INLINE static vec<uint64_t,4> zero(){ return _mm256_setzero_si256(); }
         TSIMD_INLINE vec<uint64_t,4>& operator+=(const vec<uint64_t,4> rhs){
             data = _mm256_add_epi64(data,rhs.data);
             return *this;
@@ -62,6 +63,9 @@ namespace TSimd{
             vec<uint64_t,4> r(data);
             r/=rhs;
             return r;
+        }
+        TSIMD_INLINE vec<uint64_t,4> operator-() const {
+            return zero()-*this;
         }
         TSIMD_INLINE vec<uint64_t,4>& operator&=(const vec<uint64_t,4> rhs){
             data = _mm256_and_si256(data,rhs.data);
@@ -123,6 +127,21 @@ namespace TSimd{
         }
         TSIMD_INLINE vec<uint64_t,4> operator<=(const vec<uint64_t,4> a) const {
             return a>=*this;
+        }
+        TSIMD_INLINE vec<uint64_t,4> operator!() const {
+            return (*this)==0;
+        }
+        TSIMD_INLINE bool any() const {
+            return _mm256_movemask_epi8((*this!=0).data);
+        }
+        TSIMD_INLINE bool all() const {
+            return !_mm256_movemask_epi8((*this==0).data);
+        }
+        TSIMD_INLINE vec<uint64_t,4> max(const vec<uint64_t,4> rhs) const {
+            return select(*this>rhs,*this,rhs);
+        }
+        TSIMD_INLINE vec<uint64_t,4> min(const vec<uint64_t,4> rhs) const {
+            return select(*this<rhs,*this,rhs);
         }
         __m256i data;
         enum{ size = 4 };

@@ -17,6 +17,7 @@ namespace TSimd{
         TSIMD_INLINE void store(uint16_t* a) const { _mm_storeu_si128((__m128i*)a,data); }
         TSIMD_INLINE intl::ConstProxy<uint16_t,8> operator[](const std::size_t idx) const { return intl::ConstProxy<uint16_t,8>(*this,idx); }
         TSIMD_INLINE intl::AssignmentProxy<uint16_t,8> operator[](const std::size_t idx){ return intl::AssignmentProxy<uint16_t,8>(*this,idx); }
+        TSIMD_INLINE static vec<uint16_t,8> zero(){ return _mm_setzero_si128(); }
         TSIMD_INLINE vec<uint16_t,8>& operator+=(const vec<uint16_t,8> rhs){
             data = _mm_add_epi16(data,rhs.data);
             return *this;
@@ -67,6 +68,9 @@ namespace TSimd{
             vec<uint16_t,8> r(data);
             r/=rhs;
             return r;
+        }
+        TSIMD_INLINE vec<uint16_t,8> operator-() const {
+            return zero()-*this;
         }
         TSIMD_INLINE vec<uint16_t,8>& operator&=(const vec<uint16_t,8> rhs){
             data = _mm_and_si128(data,rhs.data);
@@ -134,6 +138,29 @@ namespace TSimd{
                 return (*this)==_mm_min_epu16(data,a.data);
             #else
                 return a>=*this;
+            #endif
+        }
+        TSIMD_INLINE vec<uint16_t,8> operator!() const {
+            return (*this)==0;
+        }
+        TSIMD_INLINE bool any() const {
+            return _mm_movemask_epi8((*this!=0).data);
+        }
+        TSIMD_INLINE bool all() const {
+            return !_mm_movemask_epi8((*this==0).data);
+        }
+        TSIMD_INLINE vec<uint16_t,8> max(const vec<uint16_t,8> rhs) const {
+            #ifdef __SSE4_1__
+                return _mm_max_epu16(data,rhs.data);
+            #else
+                return select(*this>rhs,*this,rhs);
+            #endif
+        }
+        TSIMD_INLINE vec<uint16_t,8> min(const vec<uint16_t,8> rhs) const {
+            #ifdef __SSE4_1__
+                return _mm_min_epu16(data,rhs.data);
+            #else
+                return select(*this<rhs,*this,rhs);
             #endif
         }
         __m128i data;
