@@ -7,6 +7,8 @@
 namespace TSimd{
     template<> class vec<uint64_t,2>{
     public:
+        typedef mask<128> masktype;
+        typedef __m128i simdtype;
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(uint64_t a){ data = _mm_set1_epi64x(a); }
         TSIMD_INLINE explicit vec(uint64_t* a){ data = _mm_loadu_si128((__m128i*)a); }
@@ -103,7 +105,7 @@ namespace TSimd{
         TSIMD_INLINE vec<uint64_t,2> operator>>(const int shift) const {
             return vec<uint64_t,2>(_mm_srli_epi64(data,shift));
         }
-        TSIMD_INLINE vec<uint64_t,2> operator==(const vec<uint64_t,2> a) const {
+        TSIMD_INLINE masktype operator==(const vec<uint64_t,2> a) const {
             #ifdef __SSE4_1__
                 return _mm_cmpeq_epi64(data,a.data);
             #else
@@ -111,32 +113,32 @@ namespace TSimd{
                 return _mm_and_si128(b,_mm_shuffle_epi32(b,_MM_SHUFFLE(2,3,0,1)));
             #endif
         }
-        TSIMD_INLINE vec<uint64_t,2> operator!=(const vec<uint64_t,2> a) const {
+        TSIMD_INLINE masktype operator!=(const vec<uint64_t,2> a) const {
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<uint64_t,2> operator>(const vec<uint64_t,2> a) const {
+        TSIMD_INLINE masktype operator>(const vec<uint64_t,2> a) const {
             return ~(*this<=a);
         }
-        TSIMD_INLINE vec<uint64_t,2> operator>=(const vec<uint64_t,2> a) const {
+        TSIMD_INLINE masktype operator>=(const vec<uint64_t,2> a) const {
             vec<uint64_t,2> b;
             b[0] = (*this)[0]>=a[0];
             b[1] = (*this)[1]>=a[1];
             return ~b+1;
         }
-        TSIMD_INLINE vec<uint64_t,2> operator<(const vec<uint64_t,2> a) const {
+        TSIMD_INLINE masktype operator<(const vec<uint64_t,2> a) const {
             return a>*this;
         }
-        TSIMD_INLINE vec<uint64_t,2> operator<=(const vec<uint64_t,2> a) const {
+        TSIMD_INLINE masktype operator<=(const vec<uint64_t,2> a) const {
             return a>=*this;
         }
-        TSIMD_INLINE vec<uint64_t,2> operator!() const {
+        TSIMD_INLINE masktype operator!() const {
             return (*this)==0;
         }
         TSIMD_INLINE bool any() const {
-            return _mm_movemask_epi8((*this!=0).data);
+            return (*this!=0).any();
         }
         TSIMD_INLINE bool all() const {
-            return !_mm_movemask_epi8((*this==0).data);
+            return (*this!=0).all();
         }
         TSIMD_INLINE vec<uint64_t,2> max(const vec<uint64_t,2> rhs) const {
             return select(*this>rhs,*this,rhs);

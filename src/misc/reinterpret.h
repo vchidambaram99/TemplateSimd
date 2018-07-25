@@ -1,18 +1,16 @@
 #ifndef REINTERPRET_H
 #define REINTERPRET_H
 
-#include "../tsimd.h"
+#include "../../tsimd.h"
 
 namespace TSimd{
     template<typename T, typename U> TSIMD_INLINE T reinterpret(const U a){
-        return T(reinterpret<decltype(T::data),decltype(U::data)>(a.data));
+        return T(reinterpret<typename T::simdtype,typename U::simdtype>(a.data));
     }
-    #ifdef __SSE__
+    #ifdef __SSE2__
         template<> TSIMD_INLINE __m128 reinterpret(const __m128 a){
             return a;
         }
-    #endif
-    #ifdef __SSE2__
         template<> TSIMD_INLINE __m128 reinterpret(const __m128i a){
             return _mm_castsi128_ps(a);
         }
@@ -42,8 +40,6 @@ namespace TSimd{
         template<> TSIMD_INLINE __m256 reinterpret(const __m256 a){
             return a;
         }
-    #endif
-    #ifdef __AVX2__
         template<> TSIMD_INLINE __m256 reinterpret(const __m256i a){
             return _mm256_castsi256_ps(a);
         }

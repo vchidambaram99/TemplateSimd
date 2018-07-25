@@ -26,7 +26,10 @@
 
 namespace TSimd{
     template<typename T, int N> class vec{};
-
+}
+#include "src/misc/reinterpret.h"
+#include "src/misc/mask.h"
+namespace TSimd{
     namespace intl{
         template<typename T, int N> class ConstProxy{
         public:
@@ -233,25 +236,25 @@ namespace TSimd{
         TSIMD_INLINE operator vec<V,1>(){ //cast to other vec types of the same size
             return vec<V,1>((V)data);
         }
-        TSIMD_INLINE bool operator==(const vec<T,1> a) const {
+        TSIMD_INLINE mask<1> operator==(const vec<T,1> a) const {
             return data==a;
         }
-        TSIMD_INLINE bool operator!=(const vec<T,1> a) const {
+        TSIMD_INLINE mask<1> operator!=(const vec<T,1> a) const {
             return data!=a;
         }
-        TSIMD_INLINE bool operator>(const vec<T,1> a) const {
+        TSIMD_INLINE mask<1> operator>(const vec<T,1> a) const {
             return data>a;
         }
-        TSIMD_INLINE bool operator>=(const vec<T,1> a) const {
+        TSIMD_INLINE mask<1> operator>=(const vec<T,1> a) const {
             return data>=a;
         }
-        TSIMD_INLINE bool operator<(const vec<T,1> a) const {
+        TSIMD_INLINE mask<1> operator<(const vec<T,1> a) const {
             return data>a;
         }
-        TSIMD_INLINE bool operator<=(const vec<T,1> a) const {
+        TSIMD_INLINE mask<1> operator<=(const vec<T,1> a) const {
             return data>=a;
         }
-        TSIMD_INLINE vec<T,1> operator!() const {
+        TSIMD_INLINE mask<1> operator!() const {
             return !data;
         }
         TSIMD_INLINE bool any() const {
@@ -274,28 +277,6 @@ namespace TSimd{
             return out;
         }
     };
-}
-#include "src/reinterpret.h"
-namespace TSimd{ //equivalent of ternary operator
-/*
-TODO: Use blends instead of this construct if blends are available
-*/
-    template<typename T, int N>
-    TSIMD_INLINE vec<T,N> select(const vec<T,N> cond, const vec<T,N> a, const vec<T,N> b){
-        return (a&cond)|(b&~cond);
-    }
-    template<typename T, typename U, int N>
-    TSIMD_INLINE vec<T,N> select(const vec<T,N> cond, const U a, const vec<T,N> b){
-        return select<T,N>(cond,a,b);
-    }
-    template<typename T, typename U, int N>
-    TSIMD_INLINE vec<T,N> select(const vec<T,N> cond, const vec<T,N> a, const U b){
-        return select<T,N>(cond,a,b);
-    }
-    template<typename T>
-    TSIMD_INLINE vec<T,1> select(const bool cond, const vec<T,1> a, const vec<T,1> b){
-        return (cond)?a:b;
-    }
 }
 #include "src/float/vec4f.h"
 #include "src/float/vec8f.h"

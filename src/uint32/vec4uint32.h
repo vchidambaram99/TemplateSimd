@@ -7,6 +7,8 @@
 namespace TSimd{
     template<> class vec<uint32_t,4>{
     public:
+        typedef mask<128> masktype;
+        typedef __m128i simdtype;
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(uint32_t a){ data = _mm_set1_epi32(a); }
         TSIMD_INLINE explicit vec(uint32_t* a){ data = _mm_loadu_si128((__m128i*)a); }
@@ -112,16 +114,16 @@ namespace TSimd{
         TSIMD_INLINE vec<uint32_t,4> operator>>(const int shift) const {
             return vec<uint32_t,4>(_mm_srli_epi32(data,shift));
         }
-        TSIMD_INLINE vec<uint32_t,4> operator==(const vec<uint32_t,4> a) const {
+        TSIMD_INLINE masktype operator==(const vec<uint32_t,4> a) const {
             return _mm_cmpeq_epi32(data,a.data);
         }
-        TSIMD_INLINE vec<uint32_t,4> operator!=(const vec<uint32_t,4> a) const {
+        TSIMD_INLINE masktype operator!=(const vec<uint32_t,4> a) const {
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<uint32_t,4> operator>(const vec<uint32_t,4> a) const {
+        TSIMD_INLINE masktype operator>(const vec<uint32_t,4> a) const {
             return ~(*this<=a);
         }
-        TSIMD_INLINE vec<uint32_t,4> operator>=(const vec<uint32_t,4> a) const {
+        TSIMD_INLINE masktype operator>=(const vec<uint32_t,4> a) const {
             #ifdef __SSE4_1__
                 return (*this)==_mm_max_epu32(data,a.data);
             #else
@@ -132,24 +134,24 @@ namespace TSimd{
                 return _mm_or_si128(sgte,_mm_cmpeq_epi32(data,a.data));
             #endif
         }
-        TSIMD_INLINE vec<uint32_t,4> operator<(const vec<uint32_t,4> a) const {
+        TSIMD_INLINE masktype operator<(const vec<uint32_t,4> a) const {
             return a>*this;
         }
-        TSIMD_INLINE vec<uint32_t,4> operator<=(const vec<uint32_t,4> a) const {
+        TSIMD_INLINE masktype operator<=(const vec<uint32_t,4> a) const {
             #ifdef __SSE4_1__
                 return (*this)==_mm_min_epu32(data,a.data);
             #else
                 return a>=*this;
             #endif
         }
-        TSIMD_INLINE vec<uint32_t,4> operator!() const {
+        TSIMD_INLINE masktype operator!() const {
             return (*this)==0;
         }
         TSIMD_INLINE bool any() const {
-            return _mm_movemask_epi8((*this!=0).data);
+            return (*this!=0).any();
         }
         TSIMD_INLINE bool all() const {
-            return !_mm_movemask_epi8((*this==0).data);
+            return (*this!=0).all();
         }
         TSIMD_INLINE vec<uint32_t,4> max(const vec<uint32_t,4> rhs) const {
             #ifdef __SSE4_1__

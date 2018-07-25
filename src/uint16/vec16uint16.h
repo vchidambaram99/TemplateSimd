@@ -3,10 +3,12 @@
 
 #include "../../tsimd.h"
 
-#ifdef __SSE2__
+#ifdef __AVX2__
 namespace TSimd{
     template<> class vec<uint16_t,16>{
     public:
+        typedef mask<256> masktype;
+        typedef __m256i simdtype;
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(uint16_t a){ data = _mm256_set1_epi16(a); }
         TSIMD_INLINE explicit vec(uint16_t* a){ data = _mm256_loadu_si256((__m256i*)a); }
@@ -103,32 +105,32 @@ namespace TSimd{
         TSIMD_INLINE vec<uint16_t,16> operator>>(const int shift) const {
             return vec<uint16_t,16>(_mm256_srli_epi16(data,shift));
         }
-        TSIMD_INLINE vec<uint16_t,16> operator==(const vec<uint16_t,16> a) const {
+        TSIMD_INLINE masktype operator==(const vec<uint16_t,16> a) const {
             return _mm256_cmpeq_epi16(data,a.data);
         }
-        TSIMD_INLINE vec<uint16_t,16> operator!=(const vec<uint16_t,16> a) const {
+        TSIMD_INLINE masktype operator!=(const vec<uint16_t,16> a) const {
             return ~(*this==a);
         }
-        TSIMD_INLINE vec<uint16_t,16> operator>(const vec<uint16_t,16> a) const {
+        TSIMD_INLINE masktype operator>(const vec<uint16_t,16> a) const {
             return ~(*this<=a);
         }
-        TSIMD_INLINE vec<uint16_t,16> operator>=(const vec<uint16_t,16> a) const {
+        TSIMD_INLINE masktype operator>=(const vec<uint16_t,16> a) const {
             return (*this)==_mm256_max_epu16(data,a.data);
         }
-        TSIMD_INLINE vec<uint16_t,16> operator<(const vec<uint16_t,16> a) const {
+        TSIMD_INLINE masktype operator<(const vec<uint16_t,16> a) const {
             return a>*this;
         }
-        TSIMD_INLINE vec<uint16_t,16> operator<=(const vec<uint16_t,16> a) const {
+        TSIMD_INLINE masktype operator<=(const vec<uint16_t,16> a) const {
             return (*this)==_mm256_min_epu16(data,a.data);
         }
-        TSIMD_INLINE vec<uint16_t,16> operator!() const {
+        TSIMD_INLINE masktype operator!() const {
             return (*this)==0;
         }
         TSIMD_INLINE bool any() const {
-            return _mm256_movemask_epi8((*this!=0).data);
+            return (*this!=0).any();
         }
         TSIMD_INLINE bool all() const {
-            return !_mm256_movemask_epi8((*this==0).data);
+            return (*this!=0).all();
         }
         TSIMD_INLINE vec<uint16_t,16> max(const vec<uint16_t,16> rhs) const {
             return _mm256_max_epu16(data,rhs.data);

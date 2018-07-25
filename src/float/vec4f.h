@@ -3,10 +3,12 @@
 
 #include "../../tsimd.h"
 
-#ifdef __SSE__
+#ifdef __SSE2__
 namespace TSimd{
     template<> class vec<float,4>{
     public:
+        typedef mask<128> masktype;
+        typedef __m128 simdtype;
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(float a){ data = _mm_set_ps1(a); }
         TSIMD_INLINE explicit vec(float* a){ data = _mm_loadu_ps(a); }
@@ -71,32 +73,32 @@ namespace TSimd{
         TSIMD_INLINE vec<float,4> operator~() const {
             return vec<float,4>(_mm_xor_ps(data,_mm_castsi128_ps(_mm_set1_epi32(-1))));
         }
-        TSIMD_INLINE vec<float,4> operator==(const vec<float,4> a) const {
+        TSIMD_INLINE masktype operator==(const vec<float,4> a) const {
             return _mm_cmpeq_ps(data,a.data);
         }
-        TSIMD_INLINE vec<float,4> operator!=(const vec<float,4> a) const {
+        TSIMD_INLINE masktype operator!=(const vec<float,4> a) const {
             return _mm_cmpneq_ps(data,a.data);
         }
-        TSIMD_INLINE vec<float,4> operator>(const vec<float,4> a) const {
+        TSIMD_INLINE masktype operator>(const vec<float,4> a) const {
             return _mm_cmpgt_ps(data,a.data);
         }
-        TSIMD_INLINE vec<float,4> operator>=(const vec<float,4> a) const {
+        TSIMD_INLINE masktype operator>=(const vec<float,4> a) const {
             return _mm_cmpge_ps(data,a.data);
         }
-        TSIMD_INLINE vec<float,4> operator<(const vec<float,4> a) const {
+        TSIMD_INLINE masktype operator<(const vec<float,4> a) const {
             return _mm_cmplt_ps(data,a.data);
         }
-        TSIMD_INLINE vec<float,4> operator<=(const vec<float,4> a) const {
+        TSIMD_INLINE masktype operator<=(const vec<float,4> a) const {
             return _mm_cmple_ps(data,a.data);
         }
-        TSIMD_INLINE vec<float,4> operator!() const {
+        TSIMD_INLINE masktype operator!() const {
             return (*this)==0;
         }
         TSIMD_INLINE bool any() const {
-            return _mm_movemask_ps((*this!=0).data);
+            return (*this!=0).any();
         }
         TSIMD_INLINE bool all() const {
-            return !_mm_movemask_ps((*this==0).data);
+            return (*this!=0).all();
         }
         TSIMD_INLINE vec<float,4> max(const vec<float,4> rhs) const {
             return _mm_max_ps(data,rhs.data);
