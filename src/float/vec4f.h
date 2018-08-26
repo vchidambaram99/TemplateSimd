@@ -4,10 +4,10 @@
 #include "../../tsimd.h"
 
 #ifdef __SSE2__
-namespace TSimd{
+namespace tsimd{
     template<> class vec<float,4>{
     public:
-        typedef mask<128> masktype;
+        typedef mask<128,4> masktype;
         typedef __m128 simdtype;
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(float a){ data = _mm_set_ps1(a); }

@@ -3,7 +3,7 @@
 
 #include "../../tsimd.h"
 
-namespace TSimd{
+namespace tsimd{
     template<typename T, typename U> TSIMD_INLINE T reinterpret(const U a){
         return T(reinterpret<typename T::simdtype,typename U::simdtype>(a.data));
     }

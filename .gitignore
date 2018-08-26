@@ -43,5 +43,3 @@ build/*
 
 # Other files #
 ###############
-makefile
-src/Main.cpp

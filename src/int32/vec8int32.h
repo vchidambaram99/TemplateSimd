@@ -4,10 +4,10 @@
 #include "../../tsimd.h"
 
 #ifdef __AVX2__
-namespace TSimd{
+namespace tsimd{
     template<> class vec<int32_t,8>{
     public:
-        typedef mask<256> masktype;
+        typedef mask<256,8> masktype;
         typedef __m256i simdtype;
         TSIMD_INLINE vec(){}
         TSIMD_INLINE vec(int32_t a){ data = _mm256_set1_epi32(a); }
