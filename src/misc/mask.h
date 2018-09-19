@@ -1,7 +1,7 @@
+#include "../../tsimd.h"
+
 #ifndef TSIMD_MASK_H
 #define TSIMD_MASK_H
-
-#include "../../tsimd.h"
 
 namespace tsimd{
 
@@ -11,18 +11,75 @@ namespace tsimd{
     template<int Bits, int Elements>
     class mask;
 
+	namespace intl{
+		template<int B, int N> class MaskConstProxy{
+		public:
+			TSIMD_INLINE MaskConstProxy(const mask<B,N>& v, const std::size_t index) : ref(v), idx(index) {}
+			TSIMD_INLINE operator bool() const {
+				inttype<B/N> arr[N];
+				reinterpret<vec<inttype<B/N>,N>>(ref).store(arr);
+				return arr[idx];
+			}
+		private:
+			const mask<B,N>& ref;
+			const std::size_t idx;
+		};
+		template<int B, int N> class MaskAssignmentProxy{
+		public:
+			TSIMD_INLINE MaskAssignmentProxy(mask<B,N>& v, const std::size_t index) : ref(v), idx(index) {}
+			TSIMD_INLINE operator bool() const {
+				inttype<B/N> arr[N];
+				reinterpret<vec<inttype<B/N>,N>>(ref).store(arr);
+				return arr[idx];
+			}
+			TSIMD_INLINE MaskAssignmentProxy<B,N>& operator=(const bool a){
+				inttype<B/N> arr[N];
+				reinterpret<vec<inttype<B/N>,N>>(ref).store(arr);
+				arr[idx] = ~((inttype<B/N>)a)+1;
+				ref = mask<B,N>(vec<inttype<B/N>,N>(arr));
+				return *this;
+			}
+			TSIMD_INLINE MaskAssignmentProxy<B,N>& operator&=(const bool a){
+				inttype<B/N> arr[N];
+				reinterpret<vec<inttype<B/N>,N>>(ref).store(arr);
+				arr[idx] &= ~((inttype<B/N>)a)+1;
+				ref = mask<B,N>(vec<inttype<B/N>,N>(arr));
+				return *this;
+			}
+			TSIMD_INLINE MaskAssignmentProxy<B,N>& operator|=(const bool a){
+				inttype<B/N> arr[N];
+				reinterpret<vec<inttype<B/N>,N>>(ref).store(arr);
+				arr[idx] |= ~((inttype<B/N>)a)+1;
+				ref = mask<B,N>(vec<inttype<B/N>,N>(arr));
+				return *this;
+			}
+			TSIMD_INLINE MaskAssignmentProxy<B,N>& operator^=(const bool a){
+				inttype<B/N> arr[N];
+				reinterpret<vec<inttype<B/N>,N>>(ref).store(arr);
+				arr[idx] ^= ~((inttype<B/N>)a)+1;
+				ref = mask<B,N>(vec<inttype<B/N>,N>(arr));
+				return *this;
+			}
+		private:
+			mask<B,N>& ref;
+			const std::size_t idx;
+		};
+	}
+
     #ifdef __SSE__
         template<int Elements>
         class mask<128, Elements>{
         public:
             typedef __m128i simdtype;
             TSIMD_INLINE mask(){}
-            template<typename T, int N> TSIMD_INLINE mask(const vec<T,N> a){
+            template<typename T, int N> TSIMD_INLINE explicit mask(const vec<T,N> a){
                 data = reinterpret<__m128i>(a.data);
             }
             TSIMD_INLINE mask(const __m128  a){ data = reinterpret<__m128i>(a); }
             TSIMD_INLINE mask(const __m128i a){ data = a; }
             TSIMD_INLINE mask(const __m128d a){ data = reinterpret<__m128i>(a); }
+			TSIMD_INLINE intl::MaskConstProxy<128,Elements> operator[](const std::size_t idx) const { return intl::MaskConstProxy<128, Elements>(*this,idx); }
+			TSIMD_INLINE intl::MaskAssignmentProxy<128,Elements> operator[](const std::size_t idx){ return intl::MaskAssignmentProxy<128, Elements>(*this,idx); }
             TSIMD_INLINE mask<128,Elements>& operator&=(const mask<128,Elements> rhs){
                 data = _mm_and_si128(data,rhs.data);
                 return *this;
@@ -63,12 +120,12 @@ namespace tsimd{
                 return _mm_movemask_epi8(data)==0xFFFF;
             }
             template<typename T, int N> vec<T,N> select(const vec<T,N> a, const vec<T,N> b) const {
-                mask<128,Elements> a1 = a;
-                mask<128,Elements> b1 = b;
+                mask<128,Elements> a1(a);
+                mask<128,Elements> b1(b);
                 #ifdef __SSE4_1__
-                    return reinterpret<typename vec<T,N>::simdtype>(_mm_blendv_epi8(a1.data,b1.data,data));
+                    return reinterpret<typename vec<T,N>::simdtype>(_mm_blendv_epi8(b1.data,a1.data,data));
                 #else
-                    return _mm_or_si128(_mm_and_si128(a1.data,data),_mm_andnot_si128(data,b1.data));
+                    return reinterpret<typename vec<T,N>::simdtype>(_mm_or_si128(_mm_and_si128(a1.data,data),_mm_andnot_si128(data,b1.data)));
                 #endif
             }
             template<typename T, int N> operator vec<T,N>() const {
@@ -90,12 +147,14 @@ namespace tsimd{
         public:
             typedef __m256i simdtype;
             TSIMD_INLINE mask(){}
-            template<typename T, int N> TSIMD_INLINE mask(const vec<T,N> a){
+            template<typename T, int N> TSIMD_INLINE explicit mask(const vec<T,N> a){
                 data = reinterpret<__m256i>(a.data);
             }
             TSIMD_INLINE mask(const __m256  a){ data = reinterpret<__m256i>(a); }
             TSIMD_INLINE mask(const __m256i a){ data = a; }
             TSIMD_INLINE mask(const __m256d a){ data = reinterpret<__m256i>(a); }
+			TSIMD_INLINE intl::MaskConstProxy<256,Elements> operator[](const std::size_t idx) const { return intl::MaskConstProxy<256, Elements>(*this,idx); }
+			TSIMD_INLINE intl::MaskAssignmentProxy<256,Elements> operator[](const std::size_t idx){ return intl::MaskAssignmentProxy<256, Elements>(*this,idx); }
             TSIMD_INLINE mask<256,Elements>& operator&=(const mask<256,Elements> rhs){
                 data = _mm256_and_si256(data,rhs.data);
                 return *this;
@@ -144,12 +203,12 @@ namespace tsimd{
                 #endif
             }
             template<typename T, int N> vec<T,N> select(const vec<T,N> a, const vec<T,N> b) const {
-                mask<256,Elements> a1 = a;
-                mask<256,Elements> b1 = b;
+                mask<256,Elements> a1(a);
+                mask<256,Elements> b1(b);
                 #ifdef __AVX2__
-                    return reinterpret<typename vec<T,N>::simdtype>(_mm256_blendv_epi8(a1.data,b1.data,data));
+                    return reinterpret<typename vec<T,N>::simdtype>(_mm256_blendv_epi8(b1.data,a1.data,data));
                 #else
-                    return _mm256_or_si256(_mm256_and_si256(a1.data,data),_mm256_andnot_si256(data,b1.data));
+                    return reinterpret<typename vec<T,N>::simdtype>(_mm256_or_si256(_mm256_and_si256(a1.data,data),_mm256_andnot_si256(data,b1.data)));
                 #endif
             }
             template<typename T, int N> operator vec<T,N>() const {

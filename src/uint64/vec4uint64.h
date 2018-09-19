@@ -122,7 +122,7 @@ namespace tsimd{
             b[1] = (*this)[1] >= a[1];
             b[2] = (*this)[2] >= a[2];
             b[3] = (*this)[3] >= a[3];
-            return ~b+1;
+            return masktype(~b+1);
         }
         TSIMD_INLINE masktype operator<(const vec<uint64_t,4> a) const {
             return a>*this;

@@ -30,6 +30,7 @@ namespace tsimd{
 }
 
 #include "src/misc/reinterpret.h"
+#include "src/misc/bitTypeDefs.h"
 #include "src/misc/mask.h"
 #include "src/misc/proxies.h"
 

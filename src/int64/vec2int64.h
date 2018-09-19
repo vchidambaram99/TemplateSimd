@@ -123,7 +123,7 @@ namespace tsimd{
                 vec<int64_t,2> b;
                 b[0] = (*this)[0]>a[0];
                 b[1] = (*this)[1]>a[1];
-                return (~b)+vec<int64_t,2>(1);
+                return masktype(~b+1);
             #endif
         }
         TSIMD_INLINE masktype operator>=(const vec<int64_t,2> a) const {
